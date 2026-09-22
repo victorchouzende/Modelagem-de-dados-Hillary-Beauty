@@ -126,7 +126,7 @@ Dessa forma, a modelagem proposta busca representar e relacionar informações s
 
 # Processo Atual do Negócio
 
-![Fluxograma do processo atual de atendimento](imagens/fluxograma-atendimento.png)
+![Fluxograma do processo atual de atendimento](Fluxograma.jpeg)
 
 <!-- AJUSTE O CAMINHO/NOME DO ARQUIVO ACIMA CONFORME O NOME REAL DA IMAGEM NO REPOSITORIO -->
 
@@ -987,7 +987,7 @@ Um registro não deverá ser excluído caso sua exclusão provoque perda de info
 
 # Diagrama Entidade-Relacionamento (DER)
 
-![DER — Hillary Beauty](imagens/der-hillary-beauty.png)
+![DER — Hillary Beauty](DER/der-hillary-beauty-compat.png)
 
 <!-- AJUSTE O CAMINHO/NOME DO ARQUIVO ACIMA CONFORME O NOME REAL DA IMAGEM NO REPOSITORIO -->
 
