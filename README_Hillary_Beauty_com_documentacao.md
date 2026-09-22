@@ -1,8 +1,17 @@
 # Hillary Beauty — Modelagem de Banco de Dados
 
+# Integrantes do grupo
+
+ - Tiago Stockmann Teixeira
+ - Victor Chouzende
+ - Carlos Eduardo Azevedo Alves
+ - Davi Henrique Santos
+
 ## Sobre o Projeto
 
 Este projeto apresenta a **modelagem de um banco de dados para a Hillary Beauty**, um studio de beleza localizado na Rua Nelson de Oliveira, 55, São Paulo — SP, Brasil.
+WhatsApp: 11986194148
+Instagram: _hillarybeauty
 
 A empresa atua na área de estética e beleza e conta atualmente com **quatro profissionais** responsáveis pela realização dos procedimentos estéticos.
 
