@@ -2,10 +2,12 @@
 
 # Integrantes do grupo
 
- - Tiago Stockmann Teixeira
- - Victor Chouzende
- - Carlos Eduardo Azevedo Alves
- - Davi Henrique Santos
+|Integrante|RGM|
+|-|-|
+|Tiago Henrique Stockmann Teixeira||
+|Victor Chouzende dos Santos||
+|Carlos Eduardo Azevedo Alves||
+|Davi Henrique Santos||
 
 ## Sobre o Projeto
 
@@ -13,7 +15,7 @@ Este projeto apresenta a **modelagem de um banco de dados para a Hillary Beauty*
 WhatsApp: 11986194148
 Instagram: _hillarybeauty
 
-A empresa atua na área de estética e beleza e conta atualmente com **quatro profissionais** responsáveis pela realização dos procedimentos estéticos.
+A empresa atua na área de estética e beleza e conta atualmente com **cinco profissionais** responsáveis pela realização dos procedimentos e com uma **recepcionista**.
 
 Atualmente, o processo de atendimento é realizado principalmente por meio de **WhatsApp e Instagram**. Os clientes entram em contato com uma das representantes, solicitam um procedimento, e a profissional verifica manualmente sua disponibilidade de agenda. Quando existe disponibilidade, o agendamento é realizado pela própria conversa e posteriormente anotado em um bloco de notas.
 
@@ -35,7 +37,7 @@ Diante desse cenário, este projeto propõe uma estrutura de banco de dados capa
 
 # Objetivo do Projeto
 
-O objetivo principal é desenvolver uma **modelagem de banco de dados estruturada** para apoiar os processos de atendimento, agendamento, cadastro de clientes, controle de profissionais, procedimentos e gerenciamento de estoque da Hillary Beauty.
+O objetivo principal é desenvolver uma **modelagem de banco de dados estruturada** para apoiar os processos de atendimento, agendamento, cadastro de clientes, controle de profissionais, procedimentos, pagamentos e gerenciamento de estoque da Hillary Beauty.
 
 O banco de dados deverá permitir que as informações sejam armazenadas de forma organizada e relacionadas entre si, possibilitando maior controle sobre as operações realizadas pela empresa.
 
@@ -46,9 +48,11 @@ Entre os principais objetivos estão:
 * Evitar conflitos de horários;
 * Controlar os profissionais responsáveis pelos procedimentos;
 * Registrar os atendimentos realizados;
+* Registrar o sinal e os pagamentos dos agendamentos;
 * Manter o histórico de cada cliente;
 * Contabilizar a quantidade de atendimentos;
-* Controlar produtos utilizados nos procedimentos;
+* Apoiar o cálculo da comissão por categoria de profissional;
+* Controlar esmaltes, EPIs e descartáveis em estoque;
 * Registrar entradas e saídas do estoque;
 * Evitar estoque negativo;
 * Identificar produtos próximos ou abaixo do estoque mínimo;
@@ -62,14 +66,14 @@ Esta entrega trata exclusivamente do **modelo conceitual** do banco de dados. N�
 
 |Fora do escopo|Motivo|
 |-|-|
-|Modelo lógico e físico (tipos de dados, índices, DDL)|Objeto das próximas entregas da disciplina|
-|Módulo financeiro (contas a pagar e a receber, fluxo de caixa, comissões)|A organização não mantém esse controle hoje; incluí-lo exigiria levantamento que não foi realizado|
+|Modelo lógico e físico (DDL, tipos definitivos, restrições)|Objeto das próximas entregas da disciplina|
+|Contas a pagar, fluxo de caixa e conciliação financeira|O levantamento tratou do sinal, dos pagamentos dos atendimentos e da comissão por categoria; não tratou de controle financeiro geral|
 |Emissão de documentos fiscais (NF-e, NFS-e)|Depende de regras tributárias externas ao funcionamento observado|
-|Cadastro de fornecedores e ordens de compra|A reposição de produtos é feita de forma avulsa, sem cadastro de fornecedor|
+|Cadastro de fornecedores e ordens de compra|O levantamento não detalhou o processo de compra; as entradas de estoque são registradas na movimentação, com motivo|
 |Interface gráfica e implementação do sistema|O produto desta etapa é o modelo de dados, não o software|
 |Perfis de acesso e permissões por usuário|Tratados apenas como requisito não funcional, sem modelagem de entidades|
 
-A entidade `Produto` é modelada como **insumo consumido durante os procedimentos**, e não como mercadoria revendida ao cliente — a venda de produtos não ocorre na operação atual da Hillary Beauty.
+A entidade `Produto` é modelada como **insumo de consumo geral** (esmaltes, EPIs e descartáveis), e não como mercadoria revendida ao cliente. Os demais materiais usados nos procedimentos não têm controle de estoque na organização.
 
 ---
 
@@ -78,10 +82,32 @@ A entidade `Produto` é modelada como **insumo consumido durante os procedimento
 **Empresa:** Hillary Beauty  
 **Segmento:** Estética e beleza  
 **Localização:** Rua Nelson de Oliveira, 55, São Paulo — SP, Brasil  
-**Quantidade de profissionais:** 4 representantes da área de estética e beleza  
+**Equipe:** 5 profissionais que realizam procedimentos e recepcionista  
 **Forma atual de agendamento:** WhatsApp e Instagram  
 **Controle atual:** Conversas, agenda manual e bloco de notas  
-**Controle de estoque:** Não estruturado em sistema próprio
+**Controle de estoque:** Não estruturado em sistema próprio  
+**Alvarás:** em processo de obtenção
+
+---
+
+# Levantamento com a Organização
+
+Além da descrição inicial do cenário, o grupo levantou informações diretamente com a Hillary Beauty, que fundamentam as entidades, os atributos e as regras deste documento.
+
+|Registro do contato|Informação|
+|-|-|
+|Data||
+|Forma (visita ou conversa)||
+|Pessoa da organização||
+
+**Informações obtidas:**
+
+* **Procedimentos oferecidos:** 22 procedimentos, cada um com valor de referência e intervalo de retorno (Anexo B).
+* **Política de agendamento:** o horário só é reservado após o pagamento de um sinal de 40% do valor do procedimento; atrasos acima de 10 minutos podem resultar em cancelamento do atendimento; após a confirmação não é possível trocar ou remanejar o horário; em caso de falta ou desistência sem justificativa, o sinal não é devolvido; a cliente declara ciência dessas regras ao pagar o sinal. A política também pede que clientes evitem acompanhantes, o que não tem efeito sobre o modelo de dados.
+* **Remuneração das profissionais:** comissão por categoria de profissional, com percentual definido pela organização para cada categoria (os percentuais não são reproduzidos neste documento).
+* **Estoque:** controlado somente para esmaltes, EPIs e descartáveis.
+* **Equipe:** além das profissionais que realizam procedimentos, há recepcionista, que não realiza procedimentos estéticos.
+* **Alvarás:** em processo de obtenção.
 
 ---
 
@@ -114,21 +140,19 @@ A Hillary Beauty foi escolhida por apresentar um cenário real em que a aplicaç
 
 A empresa possui processos de atendimento e gerenciamento de clientes que atualmente são realizados de forma pouco centralizada, principalmente por meio do WhatsApp e Instagram.
 
-A existência de quatro profissionais e a necessidade de realizar atendimentos mediante agendamento tornam importante o controle dos horários disponíveis, dos profissionais responsáveis e dos procedimentos realizados.
+A existência de cinco profissionais e a necessidade de realizar atendimentos mediante agendamento e pagamento de sinal tornam importante o controle dos horários disponíveis, dos profissionais responsáveis e dos procedimentos realizados.
 
-Além disso, existe a necessidade de melhorar o controle dos produtos utilizados nos procedimentos e do estoque disponível.
+Além disso, existe a necessidade de melhorar o controle dos produtos de consumo e do estoque disponível.
 
 A ausência de um sistema centralizado pode ocasionar conflitos de horários, perda de informações, dificuldade na consulta do histórico dos clientes e falta de controle sobre a quantidade de produtos disponíveis.
 
-Dessa forma, a modelagem proposta busca representar e relacionar informações sobre **clientes, profissionais, procedimentos, agendamentos, atendimentos, produtos e movimentações de estoque**, proporcionando uma visão mais organizada das atividades realizadas pela empresa.
+Dessa forma, a modelagem proposta busca representar e relacionar informações sobre **clientes, profissionais, procedimentos, agendamentos, atendimentos, pagamentos, produtos e movimentações de estoque**, proporcionando uma visão mais organizada das atividades realizadas pela empresa.
 
 ---
 
 # Processo Atual do Negócio
 
 ![Fluxograma do processo atual de atendimento](Fluxograma.jpeg)
-
-<!-- AJUSTE O CAMINHO/NOME DO ARQUIVO ACIMA CONFORME O NOME REAL DA IMAGEM NO REPOSITORIO -->
 
 O processo atualmente ocorre da seguinte maneira:
 
@@ -149,6 +173,10 @@ Existe disponibilidade?
    └── SIM
          ↓
       Agendamento pela conversa
+         ↓
+      Pagamento do sinal (40% do valor do procedimento)
+         ↓
+      Horário reservado após a confirmação do pagamento
          ↓
       Anotação manual em bloco de notas
          ↓
@@ -173,37 +201,43 @@ Dificuldade para identificar estoque atual
 
 # Modelo Conceitual Proposto
 
-O banco de dados será composto pelas seguintes entidades principais:
+O banco de dados será composto pelas seguintes entidades:
 
 1. **Cliente**
 2. **Profissional**
-3. **Procedimento**
-4. **Agendamento**
-5. **Atendimento**
-6. **Produto**
-7. **Movimentação de Estoque**
+3. **Categoria_Profissional**
+4. **Procedimento**
+5. **Agendamento**
+6. **Atendimento**
+7. **Pagamento**
+8. **Produto**
+9. **Movimentação de Estoque**
 
-Além dessas entidades principais, existe uma relação necessária para representar quais procedimentos cada profissional está habilitada a realizar.
-
-Essa relação pode ser implementada por uma entidade associativa, por exemplo:
-
-**Profissional_Procedimento**
-
-Essa estrutura evita armazenar vários procedimentos em um único atributo da profissional e permite representar corretamente uma relação de muitos-para-muitos.
+Além dessas entidades, existe um relacionamento N:N entre **Profissional** e **Procedimento** ("habilitada a"), que representa quais procedimentos cada profissional pode realizar. Ele evita armazenar vários procedimentos em um único atributo da profissional e, no modelo lógico, será implementado por uma tabela de ligação.
 
 ---
 
-# Dicionário de Dados Conceitual (Preliminar)
+# Dicionário de Dados Conceitual
 
 As tabelas a seguir descrevem, para cada entidade do modelo, os atributos identificados, sua descrição, a regra de negócio associada e o motivo pelo qual o atributo é necessário.
 
 Os valores citados como exemplo são **fictícios**. Nenhum dado real de cliente, profissional ou fornecedor da organização é reproduzido neste documento.
 
+## Convenções do dicionário
+
+|Item|Convenção|
+|-|-|
+|SGBD adotado|PostgreSQL (pode ser alterado nas próximas etapas)|
+|Versão do dicionário|2.0 (revisão posterior à avaliação)|
+|Codificação e collation|UTF-8; collation pt_BR|
+|Nomes|minúsculas, sem acentos, palavras separadas por `_`, entidades no singular|
+|Prefixos e sufixos|`id_` para identificadores; `data_` para datas; `horario_` para horas; `status_` para situações; `tipo_` para classificações|
+|Notação|Chen/pé de galinha no DER; atributos identificadores marcados como PK na expressão formal|
+|Obrigatoriedade|"Obrigatório" = não pode ser nulo; "Opcional" = pode ser nulo|
+
 ## 1. Cliente
 
 A entidade `Cliente` representa as pessoas que utilizam os serviços oferecidos pela Hillary Beauty.
-
-### Atributos
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
@@ -214,39 +248,37 @@ A entidade `Cliente` representa as pessoas que utilizam os serviços oferecidos 
 |`data_cadastro`|Data de cadastro|Registrada automaticamente pelo sistema|Permite saber há quanto tempo o cliente é atendido e ordenar a base por antiguidade.|
 |`status_cliente`|Situação do cadastro|Ativo ou Inativo|Permite inativar o cadastro sem excluí-lo, preservando o histórico de atendimentos já realizados.|
 
-### Regra relacionada
+**Regra relacionada:** um cliente deverá estar previamente cadastrado para realizar ou agendar um procedimento.
 
-Um cliente deverá estar previamente cadastrado para realizar ou agendar um procedimento.
+## 2. Profissional
 
----
-
-# 2. Profissional
-
-A entidade `Profissional` representa as quatro profissionais responsáveis pelos procedimentos estéticos e de beleza.
-
-### Atributos
+A entidade `Profissional` representa as pessoas da equipe da Hillary Beauty: as cinco profissionais que realizam procedimentos e a recepcionista, que não realiza procedimentos.
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
-|`id_profissional`|Identificador único|Único e obrigatório|Necessário para identificar a profissional de forma única e manter a integridade dos relacionamentos no banco de dados.|
-|`nome`|Nome da profissional|Obrigatório|Necessário para identificar corretamente a profissional responsável por agendamentos e atendimentos.|
-|`telefone`|Telefone da profissional|Opcional; deve ser válido quando informado|Opcional. Utilizado para contato interno; não é necessário para identificar a profissional.|
+|`id_profissional`|Identificador único|Único e obrigatório|Necessário para identificar a pessoa de forma única e manter a integridade dos relacionamentos no banco de dados.|
+|`nome`|Nome da pessoa|Obrigatório|Necessário para identificar corretamente a responsável por agendamentos e atendimentos.|
+|`telefone`|Telefone|Opcional; deve ser válido quando informado|Opcional. Utilizado para contato interno; não é necessário para identificar a pessoa.|
 |`status_profissional`|Situação profissional|Ativa ou Inativa|Impede que profissionais desligadas recebam novos agendamentos, sem apagar os atendimentos que já realizaram.|
-|`especialidade`|Área de atuação da profissional|Rótulo descritivo, em texto livre|Descreve a área em que a profissional atua (ex.: estética facial). O controle operacional de **quais procedimentos** ela pode executar é feito pela entidade `Profissional_Procedimento`, e não por este atributo.|
+|`especialidade`|Área de atuação|Opcional; rótulo descritivo, em texto livre|Descreve a área em que a profissional atua. O controle operacional de **quais procedimentos** ela pode executar é feito pelo relacionamento "habilitada a", e não por este atributo. É opcional porque a recepcionista não atua em procedimentos.|
 
-### Regra relacionada
+**Regras relacionadas:** uma profissional somente poderá receber um agendamento para procedimentos que esteja habilitada a realizar; por isso, quem não possui habilitação (como a recepcionista) não recebe agendamentos. Profissionais inativas não poderão receber novos agendamentos.
 
-Uma profissional somente poderá receber um agendamento para procedimentos que esteja habilitada a realizar.
+## 3. Categoria_Profissional
 
-Profissionais inativas não poderão receber novos agendamentos.
+A entidade `Categoria_Profissional` representa as categorias usadas pela organização para definir o percentual de comissão de cada profissional.
 
----
+|Atributo|Descrição|Regra|Motivo da obrigatoriedade|
+|-|-|-|-|
+|`id_categoria`|Identificador único|Único e obrigatório|Necessário para identificar a categoria e relacioná-la às profissionais.|
+|`nome`|Nome da categoria|Obrigatório|Necessário para identificar a categoria.|
+|`percentual_comissao`|Percentual de comissão da categoria|Obrigatório; entre 0 e 100|Necessário para apurar a comissão. O percentual depende da categoria, e não de cada profissional; por isso fica nesta entidade, sem repetição.|
 
-# 3. Procedimento Estetico
+**Regra relacionada:** a comissão não é armazenada: é apurada pelo percentual da categoria sobre o valor cobrado dos atendimentos realizados pela profissional.
+
+## 4. Procedimento
 
 A entidade `Procedimento` representa os serviços estéticos e de beleza oferecidos pela empresa.
-
-### Atributos
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
@@ -254,22 +286,15 @@ A entidade `Procedimento` representa os serviços estéticos e de beleza ofereci
 |`nome`|Nome do procedimento|Obrigatório|Necessário para identificar corretamente o serviço oferecido e permitir sua utilização nos agendamentos e atendimentos.|
 |`descricao`|Descrição do procedimento|Opcional|Opcional. Detalha o que o serviço inclui, sem impacto sobre as regras do sistema.|
 |`duracao`|Tempo estimado do procedimento|Obrigatório|Necessário para calcular o horário de término e verificar conflitos de agenda.|
-|`valor`|Valor cobrado|Maior ou igual a zero|Necessário para informar o preço do serviço ao cliente e apoiar consultas e relatórios futuros.|
+|`valor`|Valor de referência ("a partir de")|Maior ou igual a zero|Necessário para informar o preço de referência ao cliente e calcular o sinal. Alguns procedimentos têm preço variável (por área, região ou sessão); o valor efetivamente cobrado fica registrado em `Pagamento`.|
+|`intervalo_retorno`|Intervalo recomendado entre sessões ou retorno|Opcional; texto descritivo (ex.: "35 dias", "depende de avaliação")|Opcional. Apoia o retorno do cliente; em alguns procedimentos o intervalo depende de avaliação e não pode ser padronizado.|
 |`status_procedimento`|Situação do procedimento|Ativo ou Inativo|Impede que procedimentos descontinuados sejam agendados, preservando os atendimentos já realizados com eles.|
 
-### Regra relacionada
+**Regras relacionadas:** o procedimento deverá estar cadastrado e ativo para poder ser agendado. A duração será utilizada para determinar o horário de término do agendamento.
 
-O procedimento deverá estar cadastrado e ativo para poder ser agendado.
-
-A duração do procedimento será utilizada para determinar o horário de término do agendamento.
-
----
-
-# 4. Agendamento
+## 5. Agendamento
 
 A entidade `Agendamento` representa a reserva de um horário para que determinado cliente realize um procedimento com uma profissional.
-
-### Atributos
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
@@ -280,27 +305,22 @@ A entidade `Agendamento` representa a reserva de um horário para que determinad
 |`data_agendamento`|Data do procedimento|Obrigatória|Necessária para definir quando o procedimento ocorrerá e permitir o controle da agenda.|
 |`horario_inicio`|Horário de início|Obrigatório|Necessário para reservar o período correto na agenda e evitar conflitos de horários.|
 |`horario_fim`|Horário de término|Determinado pelo horário de início somado à duração do procedimento|Necessário para verificar conflitos considerando o intervalo inteiro do procedimento, e não apenas o horário de início.|
-|`status_agendamento`|Situação do agendamento|Agendado, Confirmado, Realizado, Cancelado ou Não Compareceu|Necessário para distinguir o que está reservado, o que foi realizado e o que foi cancelado, controlando a liberação do horário.|
+|`status_agendamento`|Situação do agendamento|Agendado, Confirmado, Realizado, Cancelado ou Não Compareceu|Distingue o que aguarda o sinal (Agendado), o que está com o horário reservado após o pagamento do sinal (Confirmado), o que foi realizado e o que foi cancelado ou não ocorreu.|
 |`observacao`|Informações adicionais|Opcional|Opcional. Registra informações pontuais combinadas com o cliente no momento do agendamento.|
 
-### Regras relacionadas
+**Regras relacionadas:**
 
 * O cliente deve estar cadastrado.
-* A profissional deve estar ativa.
-* A profissional deve estar habilitada para o procedimento.
+* A profissional deve estar ativa e habilitada para o procedimento.
 * O procedimento deve estar ativo.
-* A profissional deve estar disponível.
-* Não podem existir horários conflitantes.
-* Alterações de horário devem passar novamente pela verificação de disponibilidade.
+* A profissional deve estar disponível e não podem existir horários conflitantes.
+* O horário só é reservado após a confirmação do pagamento do sinal.
+* Após a confirmação, não é possível trocar ou remanejar o horário.
 * Cancelamentos devem liberar o horário.
 
----
-
-# 5. Atendimento
+## 6. Atendimento
 
 A entidade `Atendimento` representa um procedimento que foi efetivamente realizado.
-
-### Atributos
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
@@ -313,46 +333,41 @@ A entidade `Atendimento` representa um procedimento que foi efetivamente realiza
 |`horario_atendimento`|Horário do atendimento|Compatível com o agendamento|Registra o horário em que o procedimento efetivamente ocorreu, que pode diferir do horário originalmente reservado.|
 |`observacao`|Observações do atendimento|Opcional|Opcional. Registra observações sobre a execução do procedimento.|
 
-### Regras relacionadas
+**Regras relacionadas:** um atendimento somente poderá ser registrado quando existir um agendamento correspondente. Os atendimentos realizados deverão permanecer registrados para formar o histórico do cliente. Somente atendimentos efetivamente realizados deverão ser contabilizados.
 
-Um atendimento somente poderá ser registrado quando existir um agendamento correspondente.
+## 7. Pagamento
 
-Os atendimentos realizados deverão permanecer registrados para formar o histórico do cliente.
+A entidade `Pagamento` representa os valores pagos referentes a um agendamento, a começar pelo sinal exigido para reservar o horário.
 
-Somente atendimentos efetivamente realizados deverão ser contabilizados na quantidade total de atendimentos.
+|Atributo|Descrição|Regra|Motivo da obrigatoriedade|
+|-|-|-|-|
+|`id_pagamento`|Identificador único|Único e obrigatório|Necessário para identificar cada pagamento de forma única e preservar seu histórico.|
+|`id_agendamento`|Agendamento relacionado|Obrigatório|O sinal é pago antes de existir atendimento; por isso o pagamento se vincula ao agendamento.|
+|`valor`|Valor pago|Estritamente maior que zero|Necessário para registrar quanto foi pago e apurar o valor cobrado do atendimento.|
+|`data_pagamento`|Data do pagamento|Obrigatória|Necessária para registrar quando o pagamento ocorreu e confirmar o agendamento.|
+|`tipo_pagamento`|Tipo do pagamento|Sinal ou Restante|Distingue o sinal, que confirma o agendamento, do pagamento do saldo.|
 
----
+**Regras relacionadas:** o sinal corresponde a 40% do valor do procedimento. O agendamento só passa a Confirmado após o pagamento do sinal. Em falta ou desistência sem justificativa, o sinal não é devolvido.
 
-# 6. Produto
+## 8. Produto
 
-A entidade `Produto` representa os produtos utilizados durante os procedimentos.
-
-### Atributos
+A entidade `Produto` representa os itens de consumo controlados em estoque: esmaltes, EPIs e descartáveis.
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
 |`id_produto`|Identificador único|Único e obrigatório|Necessário para identificar o produto de forma única e manter a integridade das movimentações de estoque.|
-|`nome`|Nome do produto|Obrigatório|Necessário para identificar corretamente o produto utilizado e permitir seu controle no estoque.|
+|`nome`|Nome do produto|Obrigatório|Necessário para identificar corretamente o produto e permitir seu controle no estoque.|
 |`descricao`|Características do produto|Opcional|Opcional. Detalha marca, volume ou composição do produto.|
 |`unidade_medida`|Unidade de controle|Valores controlados: unidade, ml, g|Necessário para que a quantidade em estoque tenha significado e para que as movimentações sejam comparáveis entre si.|
 |`quantidade_atual`|Quantidade disponível|Nunca pode ser negativa; resulta das entradas menos as saídas|Necessário para consultar o saldo disponível e sinalizar reposição sem recalcular todas as movimentações a cada consulta.|
 |`estoque_minimo`|Limite mínimo|Maior ou igual a zero|Necessário para definir o limite a partir do qual o sistema sinaliza a necessidade de reposição.|
 |`status_produto`|Situação do produto|Ativo ou Inativo|Impede que produtos descontinuados recebam novas saídas, preservando as movimentações já registradas.|
 
-### Regras relacionadas
+**Regras relacionadas:** o produto deverá estar cadastrado; a quantidade nunca poderá ser negativa; produtos inativos não receberão novas saídas; o sistema deverá sinalizar produtos abaixo ou no estoque mínimo.
 
-* O produto deverá estar cadastrado.
-* A quantidade nunca poderá ser negativa.
-* Produtos inativos não deverão receber novas movimentações de utilização.
-* O sistema deverá sinalizar produtos abaixo ou no estoque mínimo.
+## 9. Movimentação de Estoque
 
----
-
-# 7. Movimentação de Estoque
-
-A entidade `Movimentacao_Estoque` representa as entradas e saídas dos produtos.
-
-### Atributos
+A entidade `Movimentacao_Estoque` representa as entradas e saídas dos produtos. O consumo é geral, isto é, a saída não precisa estar vinculada a um atendimento.
 
 |Atributo|Descrição|Regra|Motivo da obrigatoriedade|
 |-|-|-|-|
@@ -361,181 +376,31 @@ A entidade `Movimentacao_Estoque` representa as entradas e saídas dos produtos.
 |`tipo_movimentacao`|Entrada ou saída|Valores controlados: Entrada ou Saída|Necessário para determinar se a quantidade disponível será somada ou subtraída.|
 |`quantidade`|Quantidade movimentada|Estritamente maior que zero|Necessário para calcular a alteração do saldo; uma movimentação de quantidade zero não altera o estoque.|
 |`data_movimentacao`|Data da movimentação|Obrigatória|Necessária para registrar quando a alteração de estoque ocorreu e manter o histórico das movimentações.|
-|`motivo`|Justificativa da movimentação|Obrigatório nas entradas e nas saídas não ligadas a atendimento|Justifica movimentações que não decorrem de um atendimento, como compras, perdas e vencimentos.|
-|`id_atendimento`|Atendimento relacionado|Obrigatório quando a saída estiver ligada ao procedimento|Necessário para rastrear a utilização do produto ao atendimento que originou a saída e preservar a rastreabilidade do estoque.|
+|`motivo`|Justificativa da movimentação|Obrigatório nas entradas e nas saídas não ligadas a atendimento|Justifica movimentações como compras, consumo geral, perdas e vencimentos.|
+|`id_atendimento`|Atendimento relacionado|Opcional|Opcional. Permite rastrear a saída ao atendimento quando o consumo puder ser atribuído a um.|
 
-### Regras relacionadas
-
-Uma entrada deverá aumentar a quantidade disponível.
-
-Uma saída deverá reduzir a quantidade disponível.
-
-Uma saída somente poderá ocorrer quando houver quantidade suficiente em estoque.
+**Regras relacionadas:** uma entrada aumenta a quantidade disponível; uma saída reduz a quantidade disponível; uma saída somente pode ocorrer quando houver quantidade suficiente em estoque.
 
 ---
 
-# Relacionamentos
-
-## Cliente → Agendamento
-
-Um cliente pode realizar vários agendamentos.
-
-Um agendamento pertence obrigatoriamente a um cliente.
-
-**Cardinalidade:**
-
-```text
-Cliente 1 ───────── N Agendamento
-```
-
----
-
-## Profissional → Agendamento
-
-Uma profissional pode possuir vários agendamentos.
-
-Cada agendamento possui uma única profissional responsável.
-
-**Cardinalidade:**
-
-```text
-Profissional 1 ───────── N Agendamento
-```
-
----
-
-## Procedimento → Agendamento
-
-Um procedimento pode aparecer em diversos agendamentos.
-
-Cada agendamento corresponde a um único procedimento.
-
-**Cardinalidade:**
-
-```text
-Procedimento 1 ───────── N Agendamento
-```
-
----
-
-## Agendamento → Atendimento
-
-Um agendamento poderá resultar em um atendimento realizado.
-
-O atendimento deverá estar relacionado a um agendamento existente.
-
-**Cardinalidade proposta:**
-
-```text
-Agendamento 1 ───────── 0..1 Atendimento
-```
-
-O `0..1` é importante porque um agendamento pode ser cancelado ou resultar em não comparecimento e, nesses casos, não haverá atendimento realizado.
-
----
-
-## Cliente → Atendimento
-
-Um cliente pode possuir vários atendimentos ao longo do tempo.
-
-Cada atendimento pertence a um único cliente.
-
-**Cardinalidade:**
-
-```text
-Cliente 1 ───────── N Atendimento
-```
-
----
-
-## Profissional → Atendimento
-
-Uma profissional pode realizar diversos atendimentos.
-
-Cada atendimento possui uma única profissional responsável.
-
-**Cardinalidade:**
-
-```text
-Profissional 1 ───────── N Atendimento
-```
-
----
-
-## Procedimento → Atendimento
-
-Um procedimento pode ser realizado várias vezes.
-
-Cada atendimento corresponde a um único procedimento.
-
-**Cardinalidade:**
-
-```text
-Procedimento 1 ───────── N Atendimento
-```
-
----
-
-## Produto → Movimentação de Estoque
-
-Um produto pode possuir diversas movimentações.
-
-Cada movimentação pertence a um único produto.
-
-**Cardinalidade:**
-
-```text
-Produto 1 ───────── N Movimentação_Estoque
-```
-
----
-
-## Atendimento → Movimentação de Estoque
-
-Um atendimento pode gerar uma ou várias saídas de produtos.
-
-Uma movimentação de estoque poderá estar associada a um atendimento quando a movimentação ocorrer devido à utilização de produto em um procedimento.
-
-**Cardinalidade:**
-
-```text
-Atendimento 1 ───────── N Movimentação_Estoque
-```
-
-Uma movimentação de entrada não precisa estar relacionada a um atendimento.
-
----
-
-# Profissional × Procedimento
-
-Uma profissional pode estar habilitada para realizar vários procedimentos.
-
-Um procedimento também pode ser realizado por várias profissionais.
-
-Portanto, existe uma relação **N:N (muitos-para-muitos)**.
-
-Para representar essa relação adequadamente, recomenda-se utilizar uma entidade associativa:
-
-## Profissional_Procedimento
-
-|Atributo|Descrição|Regra|Motivo da obrigatoriedade|
-|-|-|-|-|
-|`id_profissional`|Profissional habilitada|Compõe a chave primária composta|Identifica a profissional do vínculo de habilitação e mantém a integridade com a entidade `Profissional`.|
-|`id_procedimento`|Procedimento que pode realizar|Compõe a chave primária composta|Identifica o procedimento do vínculo de habilitação e mantém a integridade com a entidade `Procedimento`.|
-
-A chave primária poderá ser composta por:
-
-```text
-(id_profissional, id_procedimento)
-```
-
-### Cardinalidade
-
-```text
-Profissional 1 ─── N Profissional_Procedimento N ─── 1 Procedimento
-```
-
-Essa estrutura permite verificar se uma determinada profissional está habilitada para realizar o procedimento antes que um agendamento seja confirmado.
+# Relacionamentos e Cardinalidades
+
+As cardinalidades indicam, para cada entidade, **(mínimo, máximo)** de vezes em que uma ocorrência dela participa do relacionamento.
+
+|Relacionamento|Cardinalidade|Entidade A|Entidade B|Leitura|
+|-|-|-|-|-|
+|realiza|1:N|Cliente (0,N)|Agendamento (1,1)|Um cliente realiza zero ou vários agendamentos; cada agendamento pertence a exatamente um cliente.|
+|é responsável|1:N|Profissional (0,N)|Agendamento (1,1)|Cada agendamento tem exatamente uma profissional responsável.|
+|compõe|1:N|Procedimento (0,N)|Agendamento (1,1)|Cada agendamento corresponde a exatamente um procedimento.|
+|gera|1:0..1|Agendamento (0,1)|Atendimento (1,1)|Um agendamento gera no máximo um atendimento (cancelamentos e não comparecimentos não geram); todo atendimento vem de exatamente um agendamento.|
+|recebe|1:N|Agendamento (0,N)|Pagamento (1,1)|Um agendamento recebe zero ou vários pagamentos (zero enquanto aguarda o sinal); cada pagamento pertence a exatamente um agendamento.|
+|possui|1:N|Cliente (0,N)|Atendimento (1,1)|Cada atendimento pertence a exatamente um cliente.|
+|executa|1:N|Profissional (0,N)|Atendimento (1,1)|Cada atendimento tem exatamente uma profissional responsável.|
+|corresponde a|1:N|Procedimento (0,N)|Atendimento (1,1)|Cada atendimento corresponde a exatamente um procedimento.|
+|é movimentado|1:N|Produto (0,N)|Movimentação (1,1)|Cada movimentação pertence a exatamente um produto.|
+|origina|1:N|Atendimento (0,N)|Movimentação (0,1)|Uma movimentação pode, ou não, estar ligada a um atendimento (entradas e consumo geral não estão).|
+|habilitada a|N:N|Profissional (0,N)|Procedimento (1,N)|Uma profissional pode estar habilitada a vários procedimentos (a recepcionista, a nenhum); todo procedimento tem ao menos uma profissional habilitada. Relacionamento N:N.|
+|classifica|1:N|Categoria_Profissional (0,N)|Profissional (0,1)|Cada profissional pertence a no máximo uma categoria de comissão.|
 
 ---
 
@@ -544,13 +409,16 @@ Essa estrutura permite verificar se uma determinada profissional está habilitad
 |Entidade|Finalidade|
 |-|-|
 |**Cliente**|Armazenar os dados e informações dos clientes|
-|**Profissional**|Controlar as quatro profissionais e seus dados|
+|**Profissional**|Controlar a equipe (profissionais e recepcionista) e seus dados|
+|**Categoria_Profissional**|Definir o percentual de comissão por categoria|
 |**Procedimento**|Cadastrar os serviços oferecidos|
-|**Profissional_Procedimento**|Controlar quais procedimentos cada profissional pode realizar|
 |**Agendamento**|Controlar datas, horários, clientes, profissionais e procedimentos|
 |**Atendimento**|Registrar os procedimentos efetivamente realizados|
-|**Produto**|Cadastrar e acompanhar os produtos utilizados|
+|**Pagamento**|Registrar o sinal e os pagamentos dos agendamentos|
+|**Produto**|Cadastrar e acompanhar esmaltes, EPIs e descartáveis|
 |**Movimentação_Estoque**|Registrar entradas e saídas dos produtos|
+
+O relacionamento N:N **habilitada a** controla quais procedimentos cada profissional pode realizar.
 
 ---
 
@@ -558,57 +426,19 @@ Essa estrutura permite verificar se uma determinada profissional está habilitad
 
 ## 1. Cadastro de Clientes
 
-O sistema deverá permitir cadastrar, consultar, alterar e excluir clientes, armazenando informações como:
-
-* Nome;
-* Telefone;
-* Data de nascimento;
-* Data de cadastro;
-* Status do cliente;
-* Histórico de atendimentos.
-
----
+O sistema deverá permitir cadastrar, consultar, alterar e inativar clientes, armazenando nome, telefone, data de nascimento, data de cadastro, status e histórico de atendimentos.
 
 ## 2. Gerenciamento de Agendamentos
 
-O sistema deverá permitir realizar agendamentos informando:
+O sistema deverá permitir realizar agendamentos informando cliente, procedimento, profissional, data e horário, verificar automaticamente a disponibilidade da profissional e impedir conflitos de horários.
 
-* Cliente;
-* Procedimento;
-* Profissional;
-* Data;
-* Horário.
+## 3. Controle de Atendimentos e Pagamentos
 
-O sistema deverá verificar automaticamente a disponibilidade da profissional e impedir conflitos de horários.
-
----
-
-## 3. Controle de Atendimentos
-
-O sistema deverá registrar cada atendimento realizado, relacionando:
-
-* Cliente;
-* Profissional;
-* Procedimento;
-* Agendamento;
-* Data;
-* Horário.
-
-Também deverá permitir consultar o histórico e a quantidade de atendimentos realizados.
-
----
+O sistema deverá registrar cada atendimento realizado, relacionando cliente, profissional, procedimento, agendamento, data e horário, permitir consultar o histórico e a quantidade de atendimentos, e registrar o sinal e os demais pagamentos dos agendamentos.
 
 ## 4. Controle de Estoque
 
-O sistema deverá permitir:
-
-* Cadastrar produtos;
-* Registrar entradas;
-* Registrar saídas;
-* Atualizar automaticamente a quantidade disponível;
-* Identificar estoque baixo;
-* Impedir estoque negativo;
-* Relacionar utilização de produtos aos atendimentos.
+O sistema deverá permitir cadastrar produtos, registrar entradas e saídas, atualizar automaticamente a quantidade disponível, identificar estoque baixo e impedir estoque negativo.
 
 ---
 
@@ -616,7 +446,7 @@ O sistema deverá permitir:
 
 ### RF01 — Cadastro de clientes
 
-O sistema deve permitir cadastrar, consultar, alterar e excluir clientes, armazenando seus dados pessoais e informações de contato.
+O sistema deve permitir cadastrar, consultar, alterar e inativar clientes, armazenando seus dados pessoais e informações de contato.
 
 ### RF02 — Gerenciamento de agendamentos
 
@@ -632,7 +462,7 @@ O sistema deve permitir cadastrar produtos e registrar suas entradas e saídas, 
 
 ### RF05 — Cadastro de profissionais
 
-O sistema deve permitir cadastrar, consultar, alterar e inativar profissionais, armazenando nome, telefone, especialidade e situação.
+O sistema deve permitir cadastrar, consultar, alterar e inativar profissionais, armazenando nome, telefone, especialidade, categoria e situação.
 
 ### RF06 — Habilitação de procedimentos por profissional
 
@@ -640,7 +470,7 @@ O sistema deve permitir registrar e consultar quais procedimentos cada profissio
 
 ### RF07 — Cadastro de procedimentos
 
-O sistema deve permitir cadastrar, consultar, alterar e inativar procedimentos, armazenando nome, descrição, duração, valor e situação.
+O sistema deve permitir cadastrar, consultar, alterar e inativar procedimentos, armazenando nome, descrição, duração, valor de referência, intervalo de retorno e situação.
 
 ### RF08 — Verificação de conflito de horários
 
@@ -650,9 +480,9 @@ O sistema deve impedir o registro de um agendamento cuja profissional já possua
 
 O sistema deve impedir o agendamento de um procedimento para o qual a profissional selecionada não esteja habilitada.
 
-### RF10 — Alteração e cancelamento de agendamento
+### RF10 — Cancelamento de agendamento
 
-O sistema deve permitir alterar a data ou o horário de um agendamento, submetendo a alteração a nova verificação de disponibilidade, e permitir cancelá-lo, liberando o horário da profissional.
+O sistema deve permitir cancelar um agendamento, liberando o horário da profissional. Após a confirmação do agendamento, o sistema não deve permitir a troca ou o remanejamento de data ou horário.
 
 ### RF11 — Impedimento de estoque negativo
 
@@ -665,6 +495,14 @@ O sistema deve sinalizar os produtos cuja quantidade atual esteja igual ou abaix
 ### RF13 — Consultas e contabilização de atendimentos
 
 O sistema deve permitir consultar a quantidade de atendimentos realizados por cliente, profissional, procedimento e período, considerando somente os atendimentos efetivamente registrados.
+
+### RF14 — Registro de pagamentos e confirmação do agendamento
+
+O sistema deve permitir registrar os pagamentos de um agendamento, e confirmar o agendamento somente após o registro do pagamento do sinal.
+
+### RF15 — Apuração de comissão
+
+O sistema deve permitir consultar a comissão devida a cada profissional por período, aplicando o percentual da sua categoria ao valor cobrado dos atendimentos realizados.
 
 ---
 
@@ -696,7 +534,7 @@ Os dados devem ser armazenados de maneira segura, evitando perda ou inconsistên
 
 O sistema trata dados pessoais de clientes (nome, telefone e data de nascimento), enquadrando-se na Lei nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais).
 
-O acesso a esses dados deve ser restrito às profissionais autorizadas, com finalidade limitada ao atendimento e ao agendamento. O sistema deve prever a inativação do cadastro em vez da exclusão física, preservando o histórico, e deve permitir o atendimento a pedidos de exclusão feitos pelo próprio titular dos dados.
+O acesso a esses dados deve ser restrito às profissionais autorizadas, com finalidade limitada ao atendimento e ao agendamento. O sistema deve prever a inativação do cadastro em vez da exclusão física, preservando o histórico, e deve permitir o atendimento a pedidos de exclusão feitos pelo próprio titular dos dados. Os detalhes estão na seção "LGPD no Dicionário de Dados".
 
 ---
 
@@ -706,47 +544,25 @@ O acesso a esses dados deve ser restrito às profissionais autorizadas, com fina
 
 Todo cliente que realizar ou agendar um procedimento deverá estar previamente cadastrado no sistema.
 
-O cadastro deverá conter, no mínimo:
-
-* Nome;
-* Telefone;
-* Data de nascimento.
-
----
+O cadastro deverá conter, no mínimo: nome e telefone. A data de nascimento é opcional.
 
 ## Cadastro de Profissionais
 
-Cada profissional deverá possuir um cadastro individual.
+Cada pessoa da equipe deverá possuir um cadastro individual.
 
-O sistema deverá manter informações de identificação e os procedimentos que a profissional está habilitada a realizar.
-
----
+O sistema deverá manter informações de identificação, a categoria de comissão e os procedimentos que a profissional está habilitada a realizar. A recepcionista não realiza procedimentos e, por isso, não possui habilitações.
 
 ## Cadastro de Procedimentos
 
-Todo procedimento oferecido pela empresa deverá estar cadastrado.
-
-O cadastro deverá conter:
-
-* Nome;
-* Descrição;
-* Duração;
-* Valor, quando aplicável;
-* Status.
-
----
+Todo procedimento oferecido pela empresa deverá estar cadastrado, com nome, descrição, duração, valor de referência, intervalo de retorno e status. Todo procedimento deve ter ao menos uma profissional habilitada.
 
 ## Agendamento
 
-Todo agendamento deverá estar obrigatoriamente vinculado a:
+Todo agendamento deverá estar obrigatoriamente vinculado a um cliente, uma profissional, um procedimento, uma data e um horário.
 
-* Um cliente;
-* Uma profissional;
-* Um procedimento;
-* Uma data;
-* Um horário.
+## Reserva de Horário e Sinal
 
----
+Para confirmar o agendamento é necessário o pagamento de um sinal correspondente a 40% do valor do procedimento. O horário só é reservado após a confirmação do pagamento.
 
 ## Disponibilidade da Profissional
 
@@ -754,246 +570,281 @@ Uma profissional não poderá possuir dois agendamentos conflitantes no mesmo pe
 
 O sistema deverá verificar automaticamente a disponibilidade antes de confirmar um novo agendamento.
 
----
-
 ## Profissional Habilitada
 
 Um procedimento somente poderá ser agendado com uma profissional que esteja habilitada a realizá-lo.
 
----
-
 ## Status do Agendamento
 
-Todo agendamento deverá possuir um status.
+Todo agendamento deverá possuir um status: Agendado (aguardando o sinal), Confirmado (sinal pago), Realizado, Cancelado ou Não Compareceu.
 
-Os status possíveis são:
+## Pontualidade
 
-* Agendado;
-* Confirmado;
-* Realizado;
-* Cancelado;
-* Não Compareceu.
+Atrasos superiores a 10 minutos poderão resultar no cancelamento do atendimento.
 
----
+## Troca e Remanejamento
+
+Após a confirmação, não é possível trocar ou remanejar o horário agendado. Quem precisar de outro horário deve cancelar e realizar um novo agendamento.
+
+## Faltas e Cancelamentos
+
+Em caso de não comparecimento sem justificativa ou desistência, o sinal não será devolvido.
 
 ## Registro do Atendimento
 
 Um atendimento somente poderá ser registrado como realizado quando estiver relacionado a um agendamento existente.
 
----
-
 ## Histórico do Cliente
 
-Todos os atendimentos realizados deverão permanecer registrados no histórico do cliente.
-
-O histórico deverá permitir consultar:
-
-* Procedimentos realizados;
-* Datas;
-* Horários;
-* Profissionais responsáveis.
-
----
+Todos os atendimentos realizados deverão permanecer registrados no histórico do cliente, permitindo consultar procedimentos realizados, datas, horários e profissionais responsáveis.
 
 ## Contabilização dos Atendimentos
 
-O sistema deverá permitir contabilizar a quantidade de atendimentos realizados.
+O sistema deverá permitir contabilizar a quantidade de atendimentos realizados por cliente, profissional, procedimento, período e empresa. Somente atendimentos efetivamente realizados deverão ser contabilizados.
 
-As consultas poderão ser realizadas por:
+## Comissão
 
-* Cliente;
-* Profissional;
-* Procedimento;
-* Período;
-* Empresa.
-
-Somente atendimentos efetivamente realizados deverão ser contabilizados.
-
----
+A comissão de cada profissional é apurada pelo percentual da categoria sobre o valor cobrado dos atendimentos que realizou. Ela não é armazenada, apenas calculada.
 
 ## Cadastro de Produtos
 
-Todo produto utilizado nos procedimentos deverá possuir cadastro no sistema.
+Todo produto controlado em estoque (esmaltes, EPIs e descartáveis) deverá possuir cadastro, com nome, descrição, unidade de medida, quantidade disponível, estoque mínimo e status.
 
-O cadastro deverá conter:
+## Entrada e Saída de Produtos
 
-* Nome;
-* Descrição;
-* Unidade de medida;
-* Quantidade disponível;
-* Estoque mínimo;
-* Status.
-
----
-
-## Entrada de Produtos
-
-Toda entrada de produto deverá ser registrada.
-
-Após a entrada, a quantidade disponível deverá ser aumentada automaticamente.
-
----
-
-## Saída de Produtos
-
-Toda utilização de produto durante um procedimento deverá gerar uma saída correspondente no estoque.
-
-A quantidade disponível deverá ser reduzida automaticamente.
-
----
+Toda entrada e toda saída de produto deverá ser registrada, ajustando automaticamente a quantidade disponível. O consumo é geral: a saída não precisa estar vinculada a um atendimento.
 
 ## Estoque Negativo
 
 O sistema não poderá permitir que a quantidade disponível de um produto fique abaixo de zero.
 
----
-
 ## Estoque Mínimo
 
-Cada produto poderá possuir uma quantidade mínima definida.
-
-Quando o estoque atingir ou ficar abaixo desse limite, o sistema deverá sinalizar a necessidade de reposição.
-
----
+Cada produto poderá possuir uma quantidade mínima definida. Quando o estoque atingir ou ficar abaixo desse limite, o sistema deverá sinalizar a necessidade de reposição.
 
 ## Cancelamento
 
-Quando um agendamento for cancelado, o horário da profissional deverá ficar disponível novamente para novos agendamentos.
+Quando um agendamento for cancelado, o horário da profissional deverá ficar disponível novamente. Um agendamento cancelado não poderá posteriormente ser registrado como atendimento realizado.
 
-Um agendamento cancelado não poderá posteriormente ser registrado como atendimento realizado.
+## Conformidade Legal
 
----
-
-## Alteração de Agendamento
-
-Qualquer alteração de data ou horário deverá realizar novamente a verificação de disponibilidade da profissional.
-
----
+O tratamento dos dados pessoais deve seguir a LGPD (Lei nº 13.709/2018). A organização está em processo de obtenção dos alvarás de funcionamento; o sistema não modela os alvarás.
 
 ## Integridade dos Registros
 
-O sistema deverá manter os relacionamentos entre:
-
-* Clientes;
-* Profissionais;
-* Procedimentos;
-* Agendamentos;
-* Atendimentos;
-* Produtos;
-* Movimentações de estoque.
-
-Não deverão existir registros sem as informações necessárias para manter a integridade do banco.
+O sistema deverá manter os relacionamentos entre clientes, profissionais, procedimentos, agendamentos, atendimentos, pagamentos, produtos e movimentações de estoque. Não deverão existir registros sem as informações necessárias para manter a integridade do banco.
 
 ---
 
 # Regras Operacionais
 
 ### RO01 — Cadastro obrigatório do cliente
-
 Um agendamento só poderá ser realizado se o cliente estiver previamente cadastrado.
 
 ### RO02 — Agendamento condicionado à disponibilidade
-
 Um procedimento somente poderá ser agendado se a profissional responsável estiver disponível na data e horário solicitados.
 
 ### RO03 — Impedimento de conflito de horários
-
 Uma profissional não poderá possuir dois agendamentos conflitantes.
 
 ### RO04 — Profissional habilitada
-
 Um procedimento somente poderá ser agendado com uma profissional habilitada.
 
 ### RO05 — Dados obrigatórios
-
-Um agendamento somente poderá ser confirmado quando possuir:
-
-* Cliente;
-* Profissional;
-* Procedimento;
-* Data;
-* Horário.
+Um agendamento somente poderá ser confirmado quando possuir cliente, profissional, procedimento, data, horário e o pagamento do sinal.
 
 ### RO06 — Registro do atendimento
-
 Um atendimento somente poderá ser registrado após existir um agendamento correspondente.
 
 ### RO07 — Histórico de atendimento
-
 Todo atendimento realizado deverá ser registrado no histórico do respectivo cliente.
 
-### RO08 — Alteração de agendamento
-
-Uma alteração de data ou horário somente poderá ser realizada quando o novo horário estiver disponível.
+### RO08 — Troca de horário não permitida
+Após a confirmação do agendamento, não é permitido trocar ou remanejar data ou horário.
 
 ### RO09 — Cancelamento
-
 Um agendamento cancelado não poderá ser registrado como atendimento realizado e deverá liberar o horário da profissional.
 
 ### RO10 — Registro de produtos
-
 Um produto somente poderá ser utilizado no controle de estoque se estiver previamente cadastrado.
 
 ### RO11 — Saída de estoque
-
-A utilização de um produto deverá gerar uma saída correspondente no estoque.
+A utilização de um produto deverá gerar uma saída correspondente no estoque, com motivo, podendo ou não estar vinculada a um atendimento.
 
 ### RO12 — Disponibilidade de estoque
-
 Um produto somente poderá ser utilizado se houver quantidade suficiente disponível.
 
 ### RO13 — Proibição de estoque negativo
-
 Uma saída não poderá ser registrada quando a quantidade solicitada for superior à quantidade disponível.
 
 ### RO14 — Entrada de estoque
-
 Uma entrada deverá aumentar automaticamente a quantidade disponível.
 
 ### RO15 — Alerta de estoque baixo
-
 Quando a quantidade atingir ou ficar abaixo do estoque mínimo, o sistema deverá sinalizar a necessidade de reposição.
 
 ### RO16 — Contabilização
-
 Somente atendimentos registrados como realizados deverão ser contabilizados.
 
 ### RO17 — Responsabilidade pelo atendimento
-
 Cada atendimento deverá estar associado a uma única profissional responsável.
 
 ### RO18 — Integridade das informações
+Um registro não deverá ser excluído caso sua exclusão provoque perda de informações necessárias para manter o histórico de agendamentos, atendimentos, pagamentos ou movimentações de estoque.
 
-Um registro não deverá ser excluído caso sua exclusão provoque perda de informações necessárias para manter o histórico de agendamentos, atendimentos ou movimentações de estoque.
+### RO19 — Sinal para reservar o horário
+O agendamento só é confirmado, e o horário reservado, após o pagamento do sinal de 40% do valor do procedimento.
 
----
+### RO20 — Atraso
+Atrasos superiores a 10 minutos poderão resultar no cancelamento do atendimento.
 
-# Cardinalidades
+### RO21 — Sinal em faltas e desistências
+Em não comparecimento sem justificativa ou desistência, o sinal não é devolvido.
 
-|Relacionamento|Cardinalidade|
-|-|-|
-|Cliente → Agendamento|1:N|
-|Profissional → Agendamento|1:N|
-|Procedimento → Agendamento|1:N|
-|Agendamento → Atendimento|1:0..1|
-|Cliente → Atendimento|1:N|
-|Profissional → Atendimento|1:N|
-|Procedimento → Atendimento|1:N|
-|Produto → Movimentação|1:N|
-|Atendimento → Movimentação|1:N|
-|Profissional ↔ Procedimento|N:N|
+### RO22 — Comissão por categoria
+A comissão é apurada com o percentual da categoria da profissional, sem ser armazenada.
 
 ---
 
 # Diagrama Entidade-Relacionamento (DER)
 
-![DER — Hillary Beauty](DER/der-hillary-beauty-compat.png)
+O diagrama utiliza a notação de pé de galinha (crow's foot), que representa a cardinalidade **mínima e máxima** nos dois lados de cada relacionamento. Os símbolos ao lado de uma entidade indicam quantas ocorrências dela se relacionam com uma ocorrência da outra entidade: `||` exatamente um; `|o` zero ou um; `o{` zero ou muitos; `}|` um ou muitos.
 
-<!-- AJUSTE O CAMINHO/NOME DO ARQUIVO ACIMA CONFORME O NOME REAL DA IMAGEM NO REPOSITORIO -->
+![DER — Hillary Beauty](DER/der-hillary-beauty.png)
 
-O diagrama utiliza a notação de Peter Chen: entidades em retângulos, relacionamentos em losangos e cardinalidades nas extremidades das linhas. A entidade associativa `Profissional_Procedimento` é representada pelo retângulo que envolve o losango do relacionamento N:N.
+<details>
+<summary>Código-fonte do DER (Mermaid)</summary>
 
-Por se tratar de modelo conceitual, as chaves estrangeiras não aparecem como atributos dentro das entidades: elas estão representadas pelas próprias linhas de relacionamento, e são detalhadas no Apêndice A.
+```mermaid
+erDiagram
+    CLIENTE ||--o{ AGENDAMENTO : "realiza (1:N)"
+    PROFISSIONAL ||--o{ AGENDAMENTO : "é responsável (1:N)"
+    PROCEDIMENTO ||--o{ AGENDAMENTO : "compõe (1:N)"
+    AGENDAMENTO ||--o| ATENDIMENTO : "gera (1:0..1)"
+    AGENDAMENTO ||--o{ PAGAMENTO : "recebe (1:N)"
+    CLIENTE ||--o{ ATENDIMENTO : "possui (1:N)"
+    PROFISSIONAL ||--o{ ATENDIMENTO : "executa (1:N)"
+    PROCEDIMENTO ||--o{ ATENDIMENTO : "corresponde a (1:N)"
+    PRODUTO ||--o{ MOVIMENTACAO_ESTOQUE : "é movimentado (1:N)"
+    ATENDIMENTO |o--o{ MOVIMENTACAO_ESTOQUE : "origina (1:N)"
+    PROFISSIONAL }|--o{ PROCEDIMENTO : "habilitada a (N:N)"
+    CATEGORIA_PROFISSIONAL |o--o{ PROFISSIONAL : "classifica (1:N)"
+```
+
+</details>
+
+Por se tratar de modelo conceitual, as chaves estrangeiras não aparecem como atributos: elas estão representadas pelas próprias linhas de relacionamento e são detalhadas no Apêndice A. Os atributos de cada entidade estão no Dicionário de Dados.
+
+---
+
+# Fluxo de Dados
+
+O fluxo abaixo mostra como os dados circulam no sistema proposto, a partir dos requisitos funcionais. O contato com o cliente continua pelos canais atuais; a equipe registra as informações no sistema.
+
+![Fluxo de dados — Hillary Beauty](DER/fluxo-de-dados-hillary-beauty.png)
+
+<details>
+<summary>Código-fonte do fluxo de dados (Mermaid)</summary>
+
+```mermaid
+flowchart LR
+    CL["Cliente"]
+    EQ["Equipe: recepcionista e profissionais"]
+    CL -- "solicita procedimento (WhatsApp/Instagram)" --> EQ
+    EQ -- "dados do cliente" --> P1(("1 Cadastrar cliente"))
+    P1 --> D1[("Clientes")]
+    EQ -- "cliente, profissional, procedimento, data, horário" --> P2(("2 Registrar agendamento"))
+    D1 --> P2
+    D2[("Profissionais, procedimentos e habilitações")] --> P2
+    P2 -- "verifica conflito de horário" --> D3[("Agendamentos")]
+    EQ -- "pagamento do sinal" --> P3(("3 Registrar pagamento"))
+    P3 --> D4[("Pagamentos")]
+    P3 -- "confirma o agendamento" --> D3
+    EQ -- "atendimento realizado" --> P4(("4 Registrar atendimento"))
+    D3 --> P4
+    P4 --> D5[("Atendimentos")]
+    EQ -- "entradas e saídas" --> P5(("5 Movimentar estoque"))
+    P5 --> D6[("Produtos e movimentações")]
+    P5 -- "alerta de estoque mínimo" --> EQ
+    D4 --> P6(("6 Consultas e relatórios"))
+    D5 --> P6
+    D6 --> P6
+    P6 -- "histórico, contagem, comissão, estoque baixo" --> EQ
+    EQ -- "confirmação do agendamento" --> CL
+```
+
+</details>
+
+---
+
+# Expressão Formal e Tipos (propostos)
+
+Notação: **PK** em negrito; `→` indica chave estrangeira; `[opc]` indica atributo opcional. Os tipos são **propostos para PostgreSQL** e serão refinados no modelo lógico. A duração é guardada em minutos.
+
+```text
+Cliente(id_cliente: integer, nome: varchar, telefone: varchar, data_nascimento: date [opc], data_cadastro: date, status_cliente: varchar)
+Categoria_Profissional(id_categoria: integer, nome: varchar, percentual_comissao: numeric(5,2))
+Profissional(id_profissional: integer, nome: varchar, telefone: varchar [opc], status_profissional: varchar, especialidade: varchar [opc], id_categoria → Categoria_Profissional [opc])
+Procedimento(id_procedimento: integer, nome: varchar, descricao: text [opc], duracao: integer, valor: numeric(10,2), intervalo_retorno: varchar [opc], status_procedimento: varchar)
+Profissional_Procedimento(id_profissional → Profissional, id_procedimento → Procedimento)   PK composta
+Agendamento(id_agendamento: integer, id_cliente → Cliente, id_profissional → Profissional, id_procedimento → Procedimento, data_agendamento: date, horario_inicio: time, horario_fim: time, status_agendamento: varchar, observacao: text [opc])
+Atendimento(id_atendimento: integer, id_agendamento → Agendamento (único), id_cliente → Cliente, id_profissional → Profissional, id_procedimento → Procedimento, data_atendimento: date, horario_atendimento: time, observacao: text [opc])
+Pagamento(id_pagamento: integer, id_agendamento → Agendamento, valor: numeric(10,2), data_pagamento: date, tipo_pagamento: varchar)
+Produto(id_produto: integer, nome: varchar, descricao: text [opc], unidade_medida: varchar, quantidade_atual: numeric, estoque_minimo: numeric, status_produto: varchar)
+Movimentacao_Estoque(id_movimentacao: integer, id_produto → Produto, tipo_movimentacao: varchar, quantidade: numeric, data_movimentacao: date, motivo: varchar [cond.], id_atendimento → Atendimento [opc])
+```
+
+PK de cada relação: `id_` da própria entidade (exceto `Profissional_Procedimento`, com PK composta).
+
+---
+
+# Índices (propostos)
+
+|Índice|Finalidade|
+|-|-|
+|PK de cada entidade|Identificação única (índice criado automaticamente)|
+|`Cliente(telefone)` e `Cliente(nome)`|Localizar o cliente a partir do contato recebido|
+|`Agendamento(id_profissional, data_agendamento, horario_inicio)`|Verificação de conflito de horários (RF08) e consulta da agenda|
+|Restrição de exclusão sobre o intervalo (profissional, data, início–fim) em agendamentos ativos|Impedir conflitos de horário diretamente no banco|
+|`Agendamento(id_cliente)`|Consulta dos agendamentos de um cliente|
+|`Atendimento(id_agendamento)` único|Garantir a cardinalidade 0..1 entre agendamento e atendimento|
+|`Atendimento(id_cliente, data_atendimento)`|Histórico do cliente|
+|`Atendimento(id_profissional, data_atendimento)`|Contagem de atendimentos e comissão por profissional e período|
+|`Pagamento(id_agendamento)`|Consulta dos pagamentos de um agendamento e confirmação do sinal|
+|`Movimentacao_Estoque(id_produto, data_movimentacao)`|Histórico de movimentações por produto|
+|`Profissional_Procedimento(id_procedimento)`|Consulta inversa: quem realiza cada procedimento|
+
+---
+
+# Log
+
+O sistema deverá registrar, com data, hora e usuário autenticado, os eventos abaixo. Os detalhes da estrutura de armazenamento serão definidos no modelo lógico.
+
+* Criação e cancelamento de agendamentos;
+* Confirmação do agendamento e registro de pagamentos;
+* Registro de atendimentos;
+* Inativação de clientes, profissionais, procedimentos e produtos;
+* Alterações de cadastro de dados pessoais;
+* Movimentações de estoque (a própria entidade `Movimentacao_Estoque` já funciona como histórico).
+
+---
+
+# LGPD no Dicionário de Dados
+
+|Dado|Entidade|Classificação|Finalidade|
+|-|-|-|-|
+|`nome`, `telefone`, `data_nascimento`|Cliente|Dado pessoal|Identificação, contato e agendamento do atendimento|
+|`nome`, `telefone`|Profissional|Dado pessoal|Identificação das responsáveis e contato interno|
+|`observacao`|Agendamento e Atendimento|Texto livre; pode conter dado relativo à saúde (dado pessoal sensível)|Registrar informações pontuais do procedimento|
+|`valor`, `data_pagamento`|Pagamento|Dado financeiro vinculado a cliente|Confirmar o agendamento e apurar o valor cobrado|
+
+**Medidas previstas:**
+
+* Acesso restrito às pessoas autorizadas, por login e senha (RNF02);
+* Uso limitado à finalidade de atendimento e agendamento;
+* Inativação do cadastro em vez de exclusão física, para preservar o histórico (RO18);
+* Atendimento a pedidos de exclusão feitos pelo titular dos dados;
+* Cuidado com o campo `observacao`, para que não receba dados sensíveis desnecessários.
 
 ---
 
@@ -1005,27 +856,31 @@ A modelagem foi estruturada dessa maneira porque cada entidade representa uma in
 
 A entidade **Cliente** é necessária porque o sistema precisa manter informações de identificação e contato das pessoas atendidas. Sem ela, não seria possível construir um histórico confiável de atendimentos ou relacionar um agendamento a uma pessoa específica.
 
-A entidade **Profissional** foi criada para representar individualmente as quatro profissionais da empresa. Isso permite saber quem é responsável por cada agendamento e atendimento, além de possibilitar o controle da disponibilidade de cada profissional.
+A entidade **Profissional** representa individualmente as pessoas da equipe. Isso permite saber quem é responsável por cada agendamento e atendimento, além de possibilitar o controle da disponibilidade de cada uma. A recepcionista também é cadastrada, sem habilitações.
+
+A entidade **Categoria_Profissional** existe porque o percentual de comissão depende da categoria, e não de cada profissional. Guardar o percentual na categoria evita repetir o mesmo valor em cada cadastro e permite alterá-lo em um único lugar.
 
 A entidade **Procedimento** representa os serviços oferecidos pela empresa. Separá-la da entidade profissional evita repetir informações como nome, duração e valor em cada agendamento.
 
-A entidade **Profissional_Procedimento** é utilizada porque uma profissional pode realizar diversos procedimentos e um mesmo procedimento pode ser realizado por várias profissionais. Dessa forma, a relação N:N é representada corretamente sem armazenar múltiplos valores dentro de um único campo.
+O relacionamento N:N **habilitada a** é utilizado porque uma profissional pode realizar diversos procedimentos e um mesmo procedimento pode ser realizado por várias profissionais. Dessa forma, a relação é representada corretamente sem armazenar múltiplos valores dentro de um único campo.
 
-A entidade **Agendamento** representa uma reserva futura de horário. Ela é separada do atendimento porque um agendamento não significa necessariamente que o procedimento foi realizado. O cliente pode cancelar ou não comparecer, por exemplo.
+A entidade **Agendamento** representa uma reserva de horário. Ela é separada do atendimento porque um agendamento não significa necessariamente que o procedimento foi realizado. O cliente pode cancelar ou não comparecer, por exemplo.
 
 A entidade **Atendimento** representa o fato de o procedimento ter sido efetivamente realizado. Essa separação permite manter o histórico real dos serviços prestados e contabilizar corretamente os atendimentos.
 
-A entidade **Produto** representa os itens utilizados nos procedimentos, enquanto a entidade **Movimentação_Estoque** registra as entradas e saídas. Essa separação permite manter um histórico das movimentações em vez de simplesmente alterar a quantidade atual e perder a informação sobre o que aconteceu anteriormente.
+A entidade **Pagamento** registra o sinal e os demais pagamentos. Como o sinal é pago antes do atendimento e confirma o agendamento, ela se liga ao agendamento.
+
+A entidade **Produto** representa os itens de consumo controlados em estoque, enquanto a entidade **Movimentação_Estoque** registra as entradas e saídas. Essa separação permite manter um histórico das movimentações em vez de simplesmente alterar a quantidade atual e perder a informação sobre o que aconteceu anteriormente.
 
 ## Alternativas consideradas e descartadas
 
-A seção anterior explica por que cada entidade existe. Esta seção registra as alternativas de modelagem que o grupo avaliou e decidiu **não** adotar, e o motivo de cada descarte.
+Esta seção registra as alternativas de modelagem que o grupo avaliou e decidiu **não** adotar, e o motivo de cada descarte.
 
 ### 1. Entidade única para agendamento e atendimento
 
 **Alternativa descartada:** representar agendamento e atendimento em uma única entidade, marcando o status como "Realizado" quando o procedimento acontecesse.
 
-Agendamento e atendimento são fatos de naturezas diferentes. O agendamento é uma intenção: pode ser remarcado, cancelado ou não se concretizar. O atendimento é um fato consumado, que precisa preservar o que efetivamente ocorreu. Unir os dois obrigaria atributos como `horario_atendimento` a permanecerem vazios na maior parte dos registros, e faria qualquer contagem de atendimentos depender de um filtro por status — solução frágil, porque a alteração de um status reescreveria o histórico. A cardinalidade `1:0..1` expressa exatamente essa assimetria: todo atendimento tem origem em um agendamento, mas nem todo agendamento gera atendimento.
+Agendamento e atendimento são fatos de naturezas diferentes. O agendamento é uma intenção: pode ser cancelado ou não se concretizar. O atendimento é um fato consumado, que precisa preservar o que efetivamente ocorreu. Unir os dois obrigaria atributos como `horario_atendimento` a permanecerem vazios na maior parte dos registros, e faria qualquer contagem de atendimentos depender de um filtro por status — solução frágil, porque a alteração de um status reescreveria o histórico. A cardinalidade `(0,1)` do lado do agendamento expressa exatamente essa assimetria: todo atendimento tem origem em um agendamento, mas nem todo agendamento gera atendimento.
 
 ### 2. Atendimento vinculado apenas ao agendamento
 
@@ -1035,44 +890,59 @@ Essa alternativa é mais enxuta e evita repetir vínculos. Ela foi descartada po
 
 A contrapartida é a possibilidade de divergência entre os dois caminhos. Por isso o dicionário de dados estabelece explicitamente que esses vínculos devem corresponder ao agendamento de origem — restrição que será implementada no modelo lógico.
 
-### 3. Atributo `especialidade` no lugar da entidade associativa
+### 3. Atributo `especialidade` no lugar do relacionamento "habilitada a"
 
 **Alternativa descartada:** utilizar apenas o atributo `especialidade` de `Profissional` para determinar quais procedimentos cada profissional pode executar.
 
-O atributo `especialidade` foi mantido no modelo, mas com função exclusivamente descritiva: ele informa a área de atuação da profissional em texto livre. Ele não serve ao controle operacional porque um texto não permite responder mecanicamente se determinada profissional está habilitada a determinado procedimento — que é justamente a verificação exigida antes de confirmar um agendamento. Além disso, uma profissional executa vários procedimentos, o que tornaria o atributo multivalorado.
-
-Por esse motivo, a habilitação é representada pela entidade associativa `Profissional_Procedimento`, que resolve o relacionamento N:N e transforma a validação em uma simples verificação de existência do vínculo.
+O atributo `especialidade` foi mantido, mas com função exclusivamente descritiva. Ele não serve ao controle operacional porque um texto não permite responder mecanicamente se determinada profissional está habilitada a determinado procedimento — que é justamente a verificação exigida antes de confirmar um agendamento. Além disso, uma profissional executa vários procedimentos, o que tornaria o atributo multivalorado. O relacionamento N:N transforma a validação em uma simples verificação de existência do vínculo.
 
 ### 4. Somente `quantidade_atual`, sem a entidade `Movimentacao_Estoque`
 
 **Alternativa descartada:** controlar o estoque apenas pelo atributo `quantidade_atual` de `Produto`, atualizando-o a cada uso.
 
-Guardar somente o saldo responde "quanto existe" e nada mais: não permite auditar divergências, apurar consumo por período nem rastrear qual atendimento consumiu qual produto. A movimentação é o evento; o saldo é consequência dele. `quantidade_atual` foi mantido no modelo mesmo sendo derivável do somatório das movimentações, por uma razão prática: o alerta de estoque mínimo é consultado com frequência, e recalcular o somatório a cada leitura seria custoso. Trata-se de uma redundância consciente, controlada e aqui documentada.
+Guardar somente o saldo responde "quanto existe" e nada mais: não permite auditar divergências nem apurar consumo por período. A movimentação é o evento; o saldo é consequência dele. `quantidade_atual` foi mantido mesmo sendo derivável do somatório das movimentações, por uma razão prática: o alerta de estoque mínimo é consultado com frequência, e recalcular o somatório a cada leitura seria custoso. Trata-se de uma redundância consciente, controlada e aqui documentada.
 
 ### 5. Relacionamento N:N direto entre `Atendimento` e `Produto`
 
-**Alternativa descartada:** ligar `Atendimento` diretamente a `Produto` em um relacionamento muitos-para-muitos, representando os produtos utilizados em cada procedimento.
+**Alternativa descartada:** ligar `Atendimento` diretamente a `Produto` em um relacionamento muitos-para-muitos.
 
-Um atendimento consome vários produtos e um produto é consumido em vários atendimentos — a relação é, de fato, N:N. Ela não foi desenhada como relacionamento direto porque já está resolvida por `Movimentacao_Estoque`, que funciona como elo entre os dois e ainda carrega atributos próprios (`quantidade`, `data_movimentacao`, `tipo_movimentacao`). Criar também um relacionamento direto produziria dois caminhos para o mesmo fato e tornaria o modelo ambíguo quanto a qual deles é a fonte da informação.
+Como o consumo de esmaltes, EPIs e descartáveis é geral, nem toda saída pertence a um atendimento. Quando houver vínculo, ele já é representado por `Movimentacao_Estoque`, que funciona como elo entre os dois e carrega atributos próprios (`quantidade`, `data_movimentacao`, `tipo_movimentacao`). Criar também um relacionamento direto produziria dois caminhos para o mesmo fato.
 
 ### 6. Entidade `Histórico` separada
 
 **Alternativa descartada:** criar uma entidade `Histórico` para armazenar os atendimentos passados de cada cliente.
 
-O histórico do cliente é uma **consulta**, não uma entidade: corresponde ao conjunto de atendimentos daquele cliente ordenado por data. Uma entidade `Histórico` com data, horário e observação duplicaria integralmente os atributos de `Atendimento`, criando duas representações do mesmo fato, com o risco de uma ser atualizada e a outra não. A regra de histórico do cliente é atendida sem nenhuma estrutura adicional.
+O histórico do cliente é uma **consulta**, não uma entidade: corresponde ao conjunto de atendimentos daquele cliente ordenado por data. Uma entidade `Histórico` duplicaria integralmente os atributos de `Atendimento`, criando duas representações do mesmo fato.
 
 ### 7. Cardinalidade 1:1 entre `Agendamento` e `Atendimento`
 
 **Alternativa descartada:** estabelecer que todo agendamento corresponde obrigatoriamente a um atendimento.
 
-Essa cardinalidade só seria correta se todo horário marcado fosse sempre cumprido. Na operação real existem cancelamentos e não comparecimentos, ambos previstos nos status do agendamento. A cardinalidade `1:0..1` é o que permite que esses casos existam no modelo sem gerar um atendimento falso e sem contaminar a contagem de atendimentos realizados.
+Essa cardinalidade só seria correta se todo horário marcado fosse sempre cumprido. Na operação real existem cancelamentos e não comparecimentos, ambos previstos nos status do agendamento. A participação `(0,1)` do agendamento é o que permite que esses casos existam sem gerar um atendimento falso e sem contaminar a contagem de atendimentos realizados.
 
+### 8. Pagamento vinculado ao Atendimento
+
+**Alternativa descartada:** ligar `Pagamento` a `Atendimento`.
+
+O sinal é pago antes do procedimento e é ele que confirma o agendamento. Nesse momento ainda não existe atendimento. Ligar o pagamento ao agendamento permite registrar o sinal na hora certa e, depois, o restante.
+
+### 9. Armazenar a comissão
+
+**Alternativa descartada:** guardar o valor da comissão em cada atendimento.
+
+A comissão é resultado do percentual da categoria sobre o valor cobrado. Guardá-la duplicaria informação derivada e ficaria desatualizada se o percentual mudasse. Por isso ela é calculada na consulta.
+
+### 10. Dois atributos de valor no procedimento
+
+**Alternativa descartada:** `valor_minimo` e `valor_maximo` em `Procedimento`.
+
+Mantém-se um único valor de referência, porque o preço final de alguns procedimentos varia por área, região ou sessão, e esse valor real é registrado no `Pagamento`. Duas faixas no cadastro adicionariam complexidade sem melhorar o controle.
 
 ---
 
 # Controle de Estoque
 
-O estoque será controlado por meio de movimentações.
+O estoque será controlado por meio de movimentações, para esmaltes, EPIs e descartáveis.
 
 ### Entrada
 
@@ -1086,14 +956,12 @@ Tipo = ENTRADA
 Quantidade aumenta
 ```
 
-### Saída
+### Saída (consumo geral)
 
 ```text
-Atendimento
-   ↓
 Produto utilizado
    ↓
-Movimentação
+Movimentação (com motivo; atendimento opcional)
    ↓
 Tipo = SAÍDA
    ↓
@@ -1105,11 +973,11 @@ Quantidade diminui
 Supondo que a Hillary Beauty possua:
 
 ```text
-Produto: Creme Facial
+Produto: Luva descartável (caixa)
 Quantidade atual: 10 unidades
 ```
 
-Durante um atendimento foram utilizadas 2 unidades:
+Durante a semana foram consumidas 2 unidades:
 
 ```text
 Quantidade anterior: 10
@@ -1137,8 +1005,6 @@ Se já existir outro agendamento da mesma profissional que ocupe esse período, 
 
 O controle deve considerar não somente o horário inicial, mas também a **duração do procedimento e o horário final**.
 
-Isso evita situações como:
-
 ```text
 Agendamento 1
 14:00 ───────── 15:00
@@ -1149,11 +1015,13 @@ Agendamento 2
           CONFLITO
 ```
 
+O agendamento nasce como **Agendado** (aguardando o sinal) e passa a **Confirmado** após o pagamento do sinal de 40%, quando o horário fica reservado. Depois disso, só pode ser cancelado.
+
 ---
 
 # Consultas que o Banco Deverá Permitir
 
-A modelagem permite futuramente criar consultas como:
+A modelagem permite futuramente criar consultas como as abaixo. Os valores são fictícios.
 
 ### Quantidade de atendimentos por profissional
 
@@ -1190,10 +1058,18 @@ Data       Procedimento       Profissional
 ### Produtos com estoque baixo
 
 ```text
-Produto       Atual    Mínimo
-------------- -------- -------
-Creme Facial  3        5
-Máscara X     2        3
+Produto            Atual    Mínimo
+------------------ -------- -------
+Luva descartável   3        5
+Esmalte X          2        3
+```
+
+### Comissão por profissional no período
+
+```text
+Profissional | Categoria  | Valor cobrado | Comissão
+-------------|------------|---------------|---------
+Ana          | Categoria A| 1.000,00      | percentual da categoria × valor cobrado
 ```
 
 ---
@@ -1202,20 +1078,18 @@ Máscara X     2        3
 
 O banco de dados deverá utilizar chaves primárias e estrangeiras para manter os relacionamentos entre as entidades.
 
-As chaves estrangeiras deverão impedir que sejam criados registros apontando para clientes, profissionais, procedimentos, produtos ou atendimentos inexistentes.
+As chaves estrangeiras deverão impedir que sejam criados registros apontando para clientes, profissionais, procedimentos, produtos, agendamentos ou atendimentos inexistentes.
 
 Também deverão ser utilizadas restrições para:
 
 * Impedir quantidade negativa no estoque;
-* Impedir quantidades de movimentação iguais ou menores que zero;
+* Impedir quantidades de movimentação e valores de pagamento iguais ou menores que zero;
 * Garantir campos obrigatórios;
 * Controlar status;
 * Evitar registros órfãos;
 * Preservar o histórico dos atendimentos;
-* Preservar movimentações de estoque;
+* Preservar pagamentos e movimentações de estoque;
 * Evitar conflitos de agendamento.
-
----
 
 ---
 
@@ -1227,11 +1101,11 @@ A implementação dessa modelagem poderá proporcionar à Hillary Beauty:
 * Centralização das informações;
 * Redução de erros manuais;
 * Redução de conflitos de horários;
-* Melhor controle da agenda;
+* Melhor controle da agenda e dos sinais pagos;
 * Identificação da profissional responsável;
 * Histórico completo dos clientes;
-* Contabilização dos atendimentos;
-* Controle das entradas e saídas de produtos;
+* Contabilização dos atendimentos e apuração da comissão;
+* Controle das entradas e saídas de esmaltes, EPIs e descartáveis;
 * Identificação de estoque baixo;
 * Prevenção de estoque negativo;
 * Maior segurança das informações;
@@ -1246,17 +1120,17 @@ A modelagem proposta para a Hillary Beauty busca solucionar problemas existentes
 
 A utilização de um banco de dados estruturado permitirá substituir o controle descentralizado realizado por WhatsApp, Instagram, conversas e anotações manuais por uma estrutura organizada e integrada.
 
-As entidades **Cliente, Profissional, Procedimento, Agendamento, Atendimento, Produto e Movimentação de Estoque**, juntamente com a relação **Profissional_Procedimento**, permitem representar os principais processos do negócio.
+As entidades **Cliente, Profissional, Categoria_Profissional, Procedimento, Agendamento, Atendimento, Pagamento, Produto e Movimentação de Estoque**, juntamente com o relacionamento **habilitada a**, permitem representar os principais processos do negócio.
 
 A separação entre **agendamento e atendimento** permite diferenciar aquilo que foi planejado daquilo que realmente foi realizado. Da mesma forma, a separação entre **produto e movimentação de estoque** possibilita controlar a quantidade atual e manter o histórico das entradas e saídas.
 
-Com isso, a modelagem fornece uma base adequada para o desenvolvimento futuro de um sistema de gerenciamento da Hillary Beauty, permitindo maior controle sobre os atendimentos, profissionais, clientes, procedimentos e estoque.
-
-
+Com isso, a modelagem fornece uma base adequada para o desenvolvimento futuro de um sistema de gerenciamento da Hillary Beauty, permitindo maior controle sobre os atendimentos, profissionais, clientes, procedimentos, pagamentos e estoque.
 
 ---
 
 # Documentação do Uso de Inteligência Artificial
+
+> Observação: após a avaliação, o modelo foi revisado (inclusão de `Pagamento` e `Categoria_Profissional`, relacionamento N:N simples "habilitada a", novas regras de agendamento e estoque). As seções 1 a 7 abaixo descrevem o uso da IA na elaboração da versão inicial.
 
 ## 1. Ferramenta e etapa
 
@@ -1279,8 +1153,6 @@ As principais etapas em que a IA foi utilizada foram:
 |Estrutura relacional|Organização das chaves primárias, chaves estrangeiras e tabelas|
 |Justificativa da modelagem|Apoio na explicação das decisões tomadas na abstração dos dados|
 |Revisão textual|Organização, padronização e correção da documentação|
-
-A documentação final apresenta as entidades **Cliente, Profissional, Procedimento, Agendamento, Atendimento, Produto e Movimentação de Estoque**, além da entidade associativa **Profissional_Procedimento**.
 
 ## 2. Motivação
 
@@ -1372,7 +1244,6 @@ As informações utilizadas na modelagem tiveram como base o cenário da Hillary
 O documento registra, por exemplo, que:
 
 * A empresa atua no segmento de estética e beleza;
-* Possui quatro profissionais;
 * Utiliza WhatsApp e Instagram para agendamento;
 * Utiliza controle manual;
 * Não possui controle estruturado de estoque.
@@ -1393,9 +1264,9 @@ Assim, não é possível apontar literalmente quais trechos foram descartados.
 
 Entretanto, a estrutura final demonstra que as sugestões foram analisadas e adaptadas ao contexto específico da Hillary Beauty, em vez de simplesmente utilizar uma estrutura genérica de banco de dados.
 
-Um exemplo importante é a criação de **Profissional_Procedimento**. Em vez de colocar vários procedimentos diretamente dentro do cadastro da profissional, a documentação utiliza uma entidade associativa para representar corretamente o relacionamento N:N.
+Um exemplo importante é a representação da habilitação das profissionais. Em vez de colocar vários procedimentos diretamente dentro do cadastro da profissional, a documentação utiliza um relacionamento N:N para representá-la corretamente.
 
-Outro exemplo é a separação entre agendamento e atendimento. O documento não considera que todo agendamento necessariamente resulte em atendimento, estabelecendo a cardinalidade **1:0..1**.
+Outro exemplo é a separação entre agendamento e atendimento. O documento não considera que todo agendamento necessariamente resulte em atendimento, estabelecendo a participação **(0,1)** do agendamento.
 
 Dessa forma, registra-se que:
 
@@ -1405,11 +1276,9 @@ Dessa forma, registra-se que:
 
 A solução final foi mantida porque consegue representar os principais processos identificados na Hillary Beauty.
 
-A entidade **Cliente** permite armazenar os dados das pessoas atendidas. A entidade **Profissional** representa individualmente as quatro profissionais. A entidade **Procedimento** representa os serviços oferecidos.
+A entidade **Cliente** permite armazenar os dados das pessoas atendidas. A entidade **Profissional** representa individualmente as pessoas da equipe. A entidade **Procedimento** representa os serviços oferecidos.
 
-A entidade **Agendamento** foi separada de **Atendimento** porque o agendamento representa uma reserva futura, enquanto o atendimento representa aquilo que efetivamente foi realizado. Dessa forma, cancelamentos e não comparecimentos não são confundidos com atendimentos efetivamente realizados.
-
-A relação **Profissional_Procedimento** foi mantida para representar corretamente quais procedimentos cada profissional pode executar, evitando colocar vários valores em um único atributo.
+A entidade **Agendamento** foi separada de **Atendimento** porque o agendamento representa uma reserva, enquanto o atendimento representa aquilo que efetivamente foi realizado. Dessa forma, cancelamentos e não comparecimentos não são confundidos com atendimentos efetivamente realizados.
 
 Para o estoque, a utilização de **Produto** juntamente com **Movimentação_Estoque** permite controlar entradas e saídas sem perder o histórico das movimentações.
 
@@ -1421,7 +1290,7 @@ A utilização da IA trouxe benefícios principalmente na organização das info
 
 Um dos principais limites é que uma IA pode sugerir estruturas genéricas que não necessariamente correspondem à realidade da empresa. Por isso, as entidades, atributos, relacionamentos e regras precisam ser analisados pelo grupo antes de serem incorporados ao modelo.
 
-No caso da Hillary Beauty, foi necessário considerar especificamente que existem quatro profissionais, que os agendamentos são realizados atualmente por WhatsApp e Instagram e que existe uma deficiência no controle de estoque.
+No caso da Hillary Beauty, foi necessário considerar especificamente a composição da equipe, que os agendamentos são realizados atualmente por WhatsApp e Instagram e que existe uma deficiência no controle de estoque.
 
 Outro ponto crítico é a possibilidade de a IA criar informações que não foram efetivamente observadas. Por esse motivo, dados fictícios, exemplos e sugestões da IA não devem ser tratados como fatos reais da empresa sem validação.
 
@@ -1443,18 +1312,24 @@ O uso da IA, portanto, ocorreu de forma complementar ao trabalho do grupo, servi
 
 > As chaves primárias e estrangeiras apresentadas abaixo **não fazem parte do modelo conceitual** e não estão representadas no DER, onde os vínculos aparecem como relacionamentos. Elas são registradas aqui apenas como antecipação da próxima entrega da disciplina, que trata do modelo lógico.
 
-## Chaves Primárias e Estrangeiras
-
 ## Cliente
 
 ```text
 PK: id_cliente
 ```
 
+## Categoria_Profissional
+
+```text
+PK: id_categoria
+```
+
 ## Profissional
 
 ```text
 PK: id_profissional
+
+FK: id_categoria → Categoria_Profissional (opcional)
 ```
 
 ## Procedimento
@@ -1463,7 +1338,7 @@ PK: id_profissional
 PK: id_procedimento
 ```
 
-## Profissional_Procedimento
+## Profissional_Procedimento (tabela de ligação do N:N "habilitada a")
 
 ```text
 PK: id_profissional + id_procedimento
@@ -1487,10 +1362,18 @@ FK: id_procedimento → Procedimento
 ```text
 PK: id_atendimento
 
-FK: id_agendamento → Agendamento
+FK: id_agendamento → Agendamento (único)
 FK: id_cliente → Cliente
 FK: id_profissional → Profissional
 FK: id_procedimento → Procedimento
+```
+
+## Pagamento
+
+```text
+PK: id_pagamento
+
+FK: id_agendamento → Agendamento
 ```
 
 ## Produto
@@ -1505,9 +1388,39 @@ PK: id_produto
 PK: id_movimentacao
 
 FK: id_produto → Produto
-FK: id_atendimento → Atendimento
+FK: id_atendimento → Atendimento (opcional)
 ```
 
+---
+
+# Anexo B — Procedimentos Levantados
+
+Valores de referência e intervalos de retorno informados pela organização. Nos procedimentos com preço variável, o valor efetivamente cobrado é registrado no pagamento.
+
+|Procedimento|Valor de referência|Intervalo de retorno|Observação|
+|-|-|-|-|
+|Brow lamination|R$ 160,00|35 dias||
+|Design estratégico|R$ 70,00|20 dias||
+|Nanofios|R$ 700,00|8 meses||
+|Lash Lifting|R$ 150,00|45 dias||
+|Hidraglos|R$ 150,00|30 dias||
+|Remoção de micropigmentação|R$ 250,00 por sessão|20 dias|Em média, 3 a 5 sessões|
+|Extensão de cílios|R$ 200,00|20 dias|Informado como manutenção|
+|Biorepair|R$ 150,00 por sessão|20 dias|Em média, 3 sessões|
+|Depilação a laser|R$ 60,00 a R$ 150,00|30 dias|Depende da área|
+|Remoção de estrias|R$ 300,00 a R$ 600,00|45 dias entre as sessões|Depende da região|
+|Manicure tradicional|R$ 45,00|7 dias||
+|Pedicure tradicional|R$ 50,00|15 dias||
+|Manicure em gel|R$ 80,00|15 dias||
+|Pedicure em gel|R$ 80,00|15 dias||
+|Quiropraxia|R$ 160,00 por sessão|Depende de avaliação||
+|Limpeza de pele|R$ 200,00|Depende de avaliação||
+|Microagulhamento|R$ 450,00|40 dias||
+|Massagens|R$ 100,00 a R$ 150,00|Não informado||
+|Preenchimento facial|R$ 1.200,00 por ml|Retoque anual||
+|Bioestimulador de colágeno|R$ 2.500,00|1 ano||
+|Preenchimento glúteo|R$ 6.000,00 (55 ml)|Retoque somente com avaliação||
+|Laser Lavien|R$ 700,00|40 dias||
 
 ---
 
@@ -1519,4 +1432,5 @@ FK: id_atendimento → Atendimento
 - ELMASRI, Ramez; NAVATHE, Shamkant B. **Sistemas de banco de dados**. 7. ed. São Paulo: Pearson, 2019.
 - HEUSER, Carlos Alberto. **Projeto de banco de dados**. 6. ed. Porto Alegre: Bookman, 2009.
 - MACHADO, Felipe Nery Rodrigues. **Banco de dados: projeto e implementação**. 3. ed. São Paulo: Érica, 2014.
+- POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL Documentation**. Disponível em: https://www.postgresql.org/docs/. Acesso em: 9 nov. 2026.
 - SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. **Sistema de banco de dados**. 7. ed. Rio de Janeiro: LTC, 2020.
