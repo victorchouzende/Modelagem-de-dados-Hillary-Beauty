@@ -4,7 +4,7 @@
 
 |Integrante|RGM|
 |-|-|
-|Tiago Henrique Stockmann Teixeira||
+|Tiago Henrique Stockmann Teixeira|| 47039311
 |Victor Chouzende dos Santos||
 |Carlos Eduardo Azevedo Alves||
 |Davi Henrique Santos||
@@ -62,11 +62,10 @@ Entre os principais objetivos estão:
 
 # Delimitação do Escopo
 
-Esta entrega trata exclusivamente do **modelo conceitual** do banco de dados. Não fazem parte do escopo desta etapa:
+Esta entrega contém o **modelo conceitual** do banco de dados (revisado após a avaliação) e o **modelo lógico implementado em PostgreSQL, no Supabase** (seção "Modelo Lógico" e pasta `banco-logico/`). Não fazem parte do escopo:
 
 |Fora do escopo|Motivo|
 |-|-|
-|Modelo lógico e físico (DDL, tipos definitivos, restrições)|Objeto das próximas entregas da disciplina|
 |Contas a pagar, fluxo de caixa e conciliação financeira|O levantamento tratou do sinal, dos pagamentos dos atendimentos e da comissão por categoria; não tratou de controle financeiro geral|
 |Emissão de documentos fiscais (NF-e, NFS-e)|Depende de regras tributárias externas ao funcionamento observado|
 |Cadastro de fornecedores e ordens de compra|O levantamento não detalhou o processo de compra; as entradas de estoque são registradas na movimentação, com motivo|
@@ -227,8 +226,8 @@ Os valores citados como exemplo são **fictícios**. Nenhum dado real de cliente
 
 |Item|Convenção|
 |-|-|
-|SGBD adotado|PostgreSQL (pode ser alterado nas próximas etapas)|
-|Versão do dicionário|2.0 (revisão posterior à avaliação)|
+|SGBD adotado|PostgreSQL, hospedado no Supabase|
+|Versão do dicionário|3.0 (inclui o modelo lógico)|
 |Codificação e collation|UTF-8; collation pt_BR|
 |Nomes|minúsculas, sem acentos, palavras separadas por `_`, entidades no singular|
 |Prefixos e sufixos|`id_` para identificadores; `data_` para datas; `horario_` para horas; `status_` para situações; `tipo_` para classificações|
@@ -704,6 +703,20 @@ Em não comparecimento sem justificativa ou desistência, o sinal não é devolv
 ### RO22 — Comissão por categoria
 A comissão é apurada com o percentual da categoria da profissional, sem ser armazenada.
 
+As regras RO23 a RO26 foram definidas durante o modelo lógico (ver seção "Modelo Lógico").
+
+### RO23 — Horário da cliente
+Uma cliente não pode ter dois horários reservados (agendamentos confirmados) sobrepostos, mesmo com profissionais diferentes.
+
+### RO24 — Início do agendamento
+Todo agendamento é criado como Agendado e só passa a Confirmado após o pagamento do sinal.
+
+### RO25 — Estados finais
+Um agendamento Cancelado ou Não Compareceu não é reativado. Para outro horário, cria-se um novo agendamento.
+
+### RO26 — Movimentações imutáveis
+Uma movimentação de estoque registrada não é alterada nem excluída. Para corrigir um lançamento, registra-se uma movimentação contrária.
+
 ---
 
 # Diagrama Entidade-Relacionamento (DER)
@@ -805,7 +818,8 @@ PK de cada relação: `id_` da própria entidade (exceto `Profissional_Procedime
 |PK de cada entidade|Identificação única (índice criado automaticamente)|
 |`Cliente(telefone)` e `Cliente(nome)`|Localizar o cliente a partir do contato recebido|
 |`Agendamento(id_profissional, data_agendamento, horario_inicio)`|Verificação de conflito de horários (RF08) e consulta da agenda|
-|Restrição de exclusão sobre o intervalo (profissional, data, início–fim) em agendamentos ativos|Impedir conflitos de horário diretamente no banco|
+|Restrição de exclusão sobre o intervalo (profissional, data, início–fim) em agendamentos com horário reservado (Confirmado ou Realizado)|Impedir conflitos de horário diretamente no banco|
+|Restrição de exclusão sobre o intervalo (cliente, data, início–fim) em agendamentos com horário reservado|Impedir que a mesma cliente tenha dois horários reservados ao mesmo tempo|
 |`Agendamento(id_cliente)`|Consulta dos agendamentos de um cliente|
 |`Atendimento(id_agendamento)` único|Garantir a cardinalidade 0..1 entre agendamento e atendimento|
 |`Atendimento(id_cliente, data_atendimento)`|Histórico do cliente|
@@ -813,12 +827,13 @@ PK de cada relação: `id_` da própria entidade (exceto `Profissional_Procedime
 |`Pagamento(id_agendamento)`|Consulta dos pagamentos de um agendamento e confirmação do sinal|
 |`Movimentacao_Estoque(id_produto, data_movimentacao)`|Histórico de movimentações por produto|
 |`Profissional_Procedimento(id_procedimento)`|Consulta inversa: quem realiza cada procedimento|
+|`Log_Auditoria(tabela, id_registro)` e `Log_Auditoria(data_hora)`|Histórico de alterações de um registro e consulta do log por período|
 
 ---
 
 # Log
 
-O sistema deverá registrar, com data, hora e usuário autenticado, os eventos abaixo. Os detalhes da estrutura de armazenamento serão definidos no modelo lógico.
+O sistema deverá registrar, com data, hora e usuário, os eventos abaixo.
 
 * Criação e cancelamento de agendamentos;
 * Confirmação do agendamento e registro de pagamentos;
@@ -826,6 +841,8 @@ O sistema deverá registrar, com data, hora e usuário autenticado, os eventos a
 * Inativação de clientes, profissionais, procedimentos e produtos;
 * Alterações de cadastro de dados pessoais;
 * Movimentações de estoque (a própria entidade `Movimentacao_Estoque` já funciona como histórico).
+
+**Implementação no modelo lógico:** tabela `log_auditoria` (data e hora, usuário, tabela, operação, identificador do registro e cópia do registro antes e depois da alteração), preenchida automaticamente por triggers em Cliente, Profissional, Categoria_Profissional, Procedimento, Agendamento, Atendimento, Pagamento, Produto e Movimentacao_Estoque. O log não pode ser alterado nem apagado. O campo `usuario` guarda o identificador do usuário autenticado quando a operação chega pela API do Supabase; enquanto não houver autenticação na aplicação (RNF02 está fora do escopo de modelagem), guarda o papel do banco que executou a operação. A atualização automática do saldo do produto não é registrada, pois cada movimentação já é o histórico.
 
 ---
 
@@ -844,7 +861,107 @@ O sistema deverá registrar, com data, hora e usuário autenticado, os eventos a
 * Uso limitado à finalidade de atendimento e agendamento;
 * Inativação do cadastro em vez de exclusão física, para preservar o histórico (RO18);
 * Atendimento a pedidos de exclusão feitos pelo titular dos dados;
-* Cuidado com o campo `observacao`, para que não receba dados sensíveis desnecessários.
+* Cuidado com o campo `observacao`, para que não receba dados sensíveis desnecessários;
+* No Supabase, segurança em nível de linha (RLS) ativada em todas as tabelas, sem políticas: a API pública não acessa os dados;
+* O `log_auditoria` guarda cópia dos registros, inclusive dados pessoais, e deve ter o mesmo acesso restrito;
+* Os dados de demonstração do repositório são fictícios.
+
+---
+
+# Modelo Lógico (PostgreSQL / Supabase)
+
+O modelo lógico transforma as entidades e os relacionamentos do modelo conceitual em tabelas, chaves, restrições, índices e regras automáticas (triggers). Ele foi implementado em **PostgreSQL**, usando o **Supabase** (serviço online) como ambiente de execução e demonstração. Os scripts estão na pasta `banco-logico/` e foram testados em um banco novo, do zero. O passo a passo para executá-los está em [`banco-logico/README.md`](banco-logico/README.md).
+
+## SGBD e ambiente
+
+* **PostgreSQL:** permite uma restrição de exclusão com intervalos de tempo, que impede o conflito de horário da profissional direto no banco (RF08), além de CHECK e triggers para as regras de agendamento e de estoque. É gratuito e bem documentado.
+* **Supabase:** oferece o PostgreSQL hospedado, com editor SQL no navegador (SQL Editor) e visualização das tabelas e do diagrama (Table Editor e Schema Visualizer), sem instalar nada no computador.
+
+## Estrutura do repositório
+
+```text
+README.md                      (este documento)
+Fluxograma.jpeg                (processo atual)
+DER/                           (DER e fluxo de dados)
+banco-logico/
+├── README.md                  (passo a passo para executar)
+├── 01_schema.sql              (tabelas, restrições, índices, triggers, log, views, RLS)
+├── 02_seed_dados.sql          (dados fictícios de demonstração)
+├── 03_consultas.sql           (conferência e consultas do README)
+├── 04_testes_regras.sql       (testes das regras de negócio)
+├── manutencao/
+│   ├── limpar_dados.sql       (apaga os dados, mantém a estrutura)
+│   └── apagar_tudo.sql        (apaga estrutura e dados)
+└── prints/                    (evidências do banco funcionando)
+```
+
+## Do conceitual ao lógico
+
+* As 9 entidades viram 9 tabelas. O relacionamento N:N "habilitada a" vira a tabela de ligação `profissional_procedimento`, com chave primária composta. A tabela `log_auditoria` implementa o log previsto neste documento. Ao todo são 11 tabelas.
+* Os identificadores são inteiros `generated by default as identity`, e os demais tipos seguem a seção "Expressão Formal e Tipos".
+* A tabela `atendimento` possui chave estrangeira composta (`id_agendamento`, `id_cliente`, `id_profissional`, `id_procedimento`) para o agendamento, o que garante que cliente, profissional e procedimento do atendimento sejam os mesmos do agendamento de origem (alternativa 2 de "Alternativas consideradas e descartadas").
+
+## Regras implementadas no banco
+
+|Regra|Como é garantida|
+|-|-|
+|Valores controlados de status, tipo e unidade; percentual entre 0 e 100; duração, valor, quantidades e pagamentos dentro dos limites|CHECK|
+|Registros sempre ligados a cliente, profissional, procedimento, produto e agendamento existentes|Chaves estrangeiras|
+|Um agendamento gera no máximo um atendimento (0..1)|UNIQUE em `atendimento(id_agendamento)`|
+|No máximo um sinal por agendamento|Índice único parcial em `pagamento`|
+|Horário de término = início + duração do procedimento|Trigger|
+|Cliente ativa, profissional ativa e habilitada, procedimento ativo (a recepcionista, sem habilitações, não recebe agendamentos)|Trigger|
+|Todo agendamento nasce como Agendado; só passa a Confirmado com o sinal pago|Trigger|
+|Após a confirmação não se troca nem remaneja data, horário, profissional ou procedimento|Trigger|
+|Cancelado e Não Compareceu não são reativados; Realizado exige agendamento Confirmado|Trigger|
+|Conflito de horário da profissional e da cliente, considerando o horário reservado (Confirmado ou Realizado)|Trigger (mensagem clara) e restrição EXCLUDE (garantia final)|
+|Atendimento só para agendamento Confirmado ou Realizado|Trigger|
+|Saída de estoque exige saldo e produto ativo; a quantidade atual é atualizada a cada movimentação; estoque nunca negativo|Trigger e CHECK|
+|Movimentações de estoque não são alteradas nem excluídas (correção por nova movimentação)|Trigger|
+|Motivo obrigatório nas entradas e nas saídas sem atendimento|CHECK|
+|Data de nascimento anterior à data atual|Trigger (e CHECK de limite mínimo)|
+|Log de auditoria dos eventos relevantes|Triggers sobre `log_auditoria`|
+|Acesso pela API pública bloqueado|RLS ativo em todas as tabelas, sem políticas|
+
+**Reserva do horário:** como o horário só é reservado após o sinal (RO19), um agendamento em status Agendado não ocupa a agenda. O conflito é verificado contra os agendamentos com horário reservado. Dois pedidos ainda aguardando o sinal podem coexistir, e o segundo a ser confirmado é recusado pelo banco.
+
+## Regras que o banco não impõe
+
+* **Valor do sinal (40%):** o banco exige o pagamento do tipo Sinal para confirmar e aceita no máximo um por agendamento, mas não confere o valor. O valor cobrado pode variar (Anexo B), então o percentual é aplicado pela aplicação; no seed ele foi calculado sobre o valor de referência.
+* **Soma dos pagamentos igual ao valor do procedimento:** não é validada.
+* **Todo procedimento ter ao menos uma profissional habilitada (cardinalidade (1,N)):** é respeitado nos dados de demonstração, mas não é uma restrição do banco.
+* **Atraso acima de 10 minutos, política de acompanhantes e não devolução do sinal (RO20 e RO21):** são regras operacionais, sem efeito sobre os dados.
+* **Autenticação e perfis de acesso (RNF02):** fora do escopo da modelagem. Enquanto não houver autenticação na aplicação, o RLS impede o acesso pela API pública.
+
+## Consultas prontas (views)
+
+|View|Finalidade|
+|-|-|
+|`vw_estoque_baixo`|Produtos com quantidade atual igual ou abaixo do mínimo (RF12)|
+|`vw_atendimentos_por_profissional`|Atendimentos por profissional e mês (RF13)|
+|`vw_atendimentos_por_procedimento`|Atendimentos por procedimento e mês (RF13)|
+|`vw_historico_cliente`|Atendimentos de cada cliente, com data, procedimento e profissional (RF03)|
+|`vw_comissao_profissional`|Percentual da categoria sobre o valor pago, por profissional e mês (RF15). A comissão é calculada, nunca armazenada|
+
+## Dados de demonstração (fictícios)
+
+O arquivo `02_seed_dados.sql` popula o banco para demonstração: 25 clientes, 5 profissionais e 1 recepcionista, 22 procedimentos, 30 agendamentos (realizados, confirmados, aguardando sinal, cancelados e não comparecimentos), pagamentos, atendimentos e 12 produtos de estoque (esmaltes, EPIs e descartáveis).
+
+* **Vêm do levantamento (Anexo B):** os 22 procedimentos, os valores de referência (nas faixas, o menor valor) e os intervalos de retorno.
+* **São fictícios:** nomes e telefones de clientes e da equipe, duração dos procedimentos, habilitações, categorias e percentuais de comissão, produtos, quantidades e todos os agendamentos, pagamentos e atendimentos. Os percentuais reais de comissão não foram informados e a duração dos procedimentos ainda não foi levantada.
+* O sinal de 40% e o restante foram registrados nos agendamentos realizados.
+
+## Revisões feitas durante o modelo lógico
+
+Ao implementar e testar o schema, foram feitos os ajustes abaixo, que geraram as regras RO23 a RO26:
+
+1. O horário só é reservado após o sinal: as restrições de conflito valem para Confirmado e Realizado, e Agendado não ocupa a agenda (alinhado à RO19).
+2. O agendamento só pode ser criado como Agendado. Antes, um INSERT já como Confirmado ou Realizado ignorava a regra do sinal.
+3. A mesma cliente não pode ter dois horários reservados ao mesmo tempo (antes só a profissional era protegida).
+4. Cancelado e Não Compareceu passam a ser estados finais.
+5. Movimentações de estoque passam a ser imutáveis, porque o saldo só era ajustado em INSERT e alterações ou exclusões deixariam o estoque inconsistente.
+6. A validação "nascimento anterior à data atual" saiu do CHECK (que usava `current_date`, não imutável e que pode falhar na restauração de um backup) e passou para um trigger.
+7. Foram criados o log de auditoria e duas views (`vw_atendimentos_por_procedimento` e `vw_historico_cliente`) para completar as consultas previstas neste documento.
 
 ---
 
@@ -1017,11 +1134,13 @@ Agendamento 2
 
 O agendamento nasce como **Agendado** (aguardando o sinal) e passa a **Confirmado** após o pagamento do sinal de 40%, quando o horário fica reservado. Depois disso, só pode ser cancelado.
 
+> Nota do modelo lógico: como o horário só é reservado após o sinal, o conflito é verificado contra os agendamentos com horário reservado (Confirmado e Realizado). Dois pedidos ainda aguardando o sinal podem coexistir; o segundo a ser confirmado é recusado pelo banco.
+
 ---
 
 # Consultas que o Banco Deverá Permitir
 
-A modelagem permite futuramente criar consultas como as abaixo. Os valores são fictícios.
+A modelagem permite criar consultas como as abaixo, implementadas como views no modelo lógico (`banco-logico/03_consultas.sql`). Os valores são fictícios.
 
 ### Quantidade de atendimentos por profissional
 
@@ -1310,7 +1429,7 @@ O uso da IA, portanto, ocorreu de forma complementar ao trabalho do grupo, servi
 
 # Apêndice A — Antecipação do Modelo Lógico
 
-> As chaves primárias e estrangeiras apresentadas abaixo **não fazem parte do modelo conceitual** e não estão representadas no DER, onde os vínculos aparecem como relacionamentos. Elas são registradas aqui apenas como antecipação da próxima entrega da disciplina, que trata do modelo lógico.
+> As chaves primárias e estrangeiras apresentadas abaixo **não fazem parte do modelo conceitual** e não estão representadas no DER, onde os vínculos aparecem como relacionamentos. Elas foram registradas aqui como antecipação do modelo lógico, que está implementado na seção "Modelo Lógico" e em `banco-logico/01_schema.sql`.
 
 ## Cliente
 
