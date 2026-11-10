@@ -1293,61 +1293,6 @@ Diante disso, a IA foi utilizada como ferramenta de apoio para:
 
 A intenção não foi substituir a análise do grupo, mas utilizar a IA como ferramenta de apoio à organização, elaboração e revisão do trabalho.
 
-## 3. Prompt(s) utilizados
-
-O arquivo final não contém um histórico completo dos prompts utilizados. Portanto, não é possível afirmar que os textos abaixo sejam uma transcrição literal dos prompts originais.
-
-Considerando o conteúdo produzido no README e as etapas de elaboração do projeto, os pedidos utilizados podem ser documentados de forma muito próxima aos comandos empregados no desenvolvimento.
-
-### Prompt relacionado à escolha e justificativa da empresa
-
-> Com base nessas informações sobre a Hillary Beauty, faça a justificativa da escolha da empresa para um trabalho de modelagem de banco de dados, explicando os problemas atuais e por que um banco de dados seria importante para a empresa.
-
-### Prompt relacionado ao processo atual
-
-> Com base nas informações fornecidas, monte o fluxo do processo atual de atendimento e agendamento da Hillary Beauty, considerando que o cliente entra em contato pelo WhatsApp ou Instagram, a profissional verifica a disponibilidade e o agendamento é anotado manualmente.
-
-### Prompt relacionado às necessidades do sistema
-
-> Com base nessas informações, indique 4 requisitos de sistema necessários para uma modelagem de banco de dados que automatize o registro dos processos da Hillary Beauty.
-
-### Prompt relacionado aos requisitos funcionais
-
-> Agora, com os mesmos requisitos, apresente 4 requisitos funcionais que o sistema deve possuir, seguindo o formato "o sistema deve permitir...".
-
-### Prompt relacionado aos requisitos não funcionais
-
-> Com a mesma base de informações, apresente os requisitos não funcionais do sistema, considerando desempenho, segurança, usabilidade e disponibilidade.
-
-### Prompt relacionado às regras de negócio
-
-> Com base nas informações da Hillary Beauty, crie as regras de negócio e regras operacionais que o sistema deverá seguir, incluindo agendamento, profissionais, procedimentos, atendimento e controle de estoque.
-
-### Prompt relacionado à modelagem
-
-> Com base em todas essas informações, identifique as entidades, atributos, relacionamentos e cardinalidades necessários para criar o modelo conceitual do banco de dados da Hillary Beauty.
-
-### Prompt relacionado à justificativa da modelagem
-
-> Explique e defenda as decisões de abstração e modelagem tomadas: por que essas entidades, esses atributos, esses relacionamentos e essas cardinalidades, e não outras alternativas possíveis? Faça de forma cordial e sem tópicos.
-
-**Observação:** os prompts acima representam uma reconstrução aproximada das solicitações realizadas. Eles não devem ser considerados uma transcrição literal de todo o histórico de conversas caso o grupo não possua esse histórico registrado.
-
-## 4. Resposta recebida
-
-A IA auxiliou na construção de uma modelagem que centraliza os principais processos da empresa.
-
-Entre os principais resultados estão:
-
-* Identificação da entidade **Cliente**;
-* Identificação da entidade **Profissional**;
-* Identificação da entidade **Procedimento**;
-* Criação da entidade **Agendamento**;
-* Criação da entidade **Atendimento**;
-* Criação da entidade **Produto**;
-* Criação da entidade **Movimentação_Estoque**;
-* Criação da entidade associativa **Profissional_Procedimento**.
-
 A entidade associativa foi utilizada porque uma profissional pode realizar vários procedimentos e um procedimento pode ser realizado por várias profissionais, caracterizando uma relação N:N.
 
 A IA também auxiliou na separação entre **Agendamento** e **Atendimento**, permitindo diferenciar aquilo que foi planejado daquilo que realmente aconteceu.
@@ -1356,7 +1301,7 @@ Outro resultado foi a separação entre **Produto** e **Movimentação_Estoque**
 
 Além disso, foram estruturados requisitos funcionais, requisitos não funcionais, regras de negócio, regras operacionais, chaves primárias, chaves estrangeiras e cardinalidades para a modelagem.
 
-## 5. Fontes consultadas e verificadas
+## 3. Fontes consultadas e verificadas
 
 De acordo com o arquivo analisado, não foram registradas fontes externas consultadas pela IA.
 
@@ -1377,7 +1322,7 @@ Portanto:
 
 Não devem ser atribuídas à IA fontes ou dados externos que não estejam efetivamente registrados e verificados pelo grupo.
 
-## 6. Trechos rejeitados ou corrigidos
+## 4. Trechos rejeitados ou corrigidos
 
 O README final não possui um histórico de versões que permita identificar exatamente quais respostas da IA foram rejeitadas.
 
@@ -1393,7 +1338,7 @@ Dessa forma, registra-se que:
 
 > As sugestões geradas pela IA foram analisadas e adaptadas pelo grupo conforme o cenário apresentado. Não foi mantido um registro separado de todos os trechos rejeitados ou corrigidos, portanto não é possível apresentar uma relação exata das sugestões descartadas.
 
-## 7. Justificativa da escolha final
+## 6. Justificativa da escolha final
 
 A solução final foi mantida porque consegue representar os principais processos identificados na Hillary Beauty.
 
@@ -1405,7 +1350,7 @@ Para o estoque, a utilização de **Produto** juntamente com **Movimentação_Es
 
 Dessa maneira, a estrutura final atende diretamente aos problemas identificados no cenário da empresa, principalmente a falta de centralização dos clientes, agendamentos, atendimentos e estoque.
 
-## 8. Reflexão crítica sobre o uso da IA
+## 7. Reflexão crítica sobre o uso da IA
 
 A utilização da IA trouxe benefícios principalmente na organização das informações e na estruturação da documentação, mas suas respostas não devem ser consideradas automaticamente corretas.
 
