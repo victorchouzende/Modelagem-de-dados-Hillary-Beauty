@@ -4,7 +4,7 @@
 
 |Integrante|RGM|
 |-|-|
-|Tiago Henrique Stockmann Teixeira|| 47039311
+|Tiago Henrique Stockmann Teixeira| 47039311 |
 |Victor Chouzende dos Santos||
 |Carlos Eduardo Azevedo Alves||
 |Davi Henrique Santos||
