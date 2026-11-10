@@ -1255,7 +1255,7 @@ Com isso, a modelagem fornece uma base adequada para o desenvolvimento futuro de
 
 ## 1. Ferramenta e etapa
 
-Durante o desenvolvimento do projeto de modelagem de banco de dados da Hillary Beauty, foi utilizada uma ferramenta de inteligência artificial generativa, o ChatGPT, como recurso de apoio em diferentes etapas do trabalho.
+Durante o desenvolvimento do projeto de modelagem de banco de dados da Hillary Beauty, foi utilizada uma ferramenta de inteligência artificial generativa, o ChatGPT/Claude, como recursos de apoio em diferentes etapas do trabalho.
 
 A ferramenta foi utilizada principalmente para organizar as informações fornecidas pelo grupo, estruturar os requisitos do sistema, auxiliar na identificação de entidades, atributos e relacionamentos, definir cardinalidades, organizar regras de negócio e revisar a redação da documentação.
 
@@ -1266,14 +1266,13 @@ As principais etapas em que a IA foi utilizada foram:
 |Levantamento do problema|Organização e estruturação das informações sobre os problemas atuais da empresa|
 |Organização do projeto|Estruturação do contexto, objetivo e justificativa da escolha da Hillary Beauty|
 |Modelagem conceitual|Identificação e organização das entidades, atributos e relacionamentos|
-|Cardinalidades|Apoio na definição das relações 1:N, 1:0..1 e N:N|
 |Requisitos|Estruturação dos requisitos do sistema e requisitos funcionais|
 |Requisitos não funcionais|Organização dos requisitos relacionados a desempenho, segurança, usabilidade e disponibilidade|
-|Regras de negócio|Transformação das necessidades do negócio em regras que o sistema deverá obedecer|
 |Regras operacionais|Organização das restrições operacionais do sistema|
 |Estrutura relacional|Organização das chaves primárias, chaves estrangeiras e tabelas|
 |Justificativa da modelagem|Apoio na explicação das decisões tomadas na abstração dos dados|
 |Revisão textual|Organização, padronização e correção da documentação|
+|Scripts|Criação da massa de codigo referente ao banco e sua administração|
 
 ## 2. Motivação
 
@@ -1287,8 +1286,6 @@ Diante disso, a IA foi utilizada como ferramenta de apoio para:
 * Transformar problemas em necessidades de sistema;
 * Estruturar requisitos funcionais e não funcionais;
 * Identificar entidades e relacionamentos;
-* Auxiliar na definição das cardinalidades;
-* Organizar as regras de negócio;
 * Revisar e padronizar a documentação.
 
 A intenção não foi substituir a análise do grupo, mas utilizar a IA como ferramenta de apoio à organização, elaboração e revisão do trabalho.
