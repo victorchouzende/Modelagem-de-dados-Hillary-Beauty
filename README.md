@@ -97,9 +97,8 @@ Além da descrição inicial do cenário, o grupo levantou informações diretam
 
 |Registro do contato|Informação|
 |-|-|
-|Data||
-|Forma (visita ou conversa)||
-|Pessoa da organização||
+|Data| 03/11 |
+|Forma (visita ou conversa)| Visita |
 
 **Informações obtidas:**
 
