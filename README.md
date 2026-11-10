@@ -12,6 +12,7 @@
 ## Sobre o Projeto
 
 Este projeto apresenta a **modelagem de um banco de dados para a Hillary Beauty**, um studio de beleza localizado na Rua Nelson de Oliveira, 55, São Paulo — SP, Brasil.
+
 WhatsApp: 11986194148
 Instagram: _hillarybeauty
 
