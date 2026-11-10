@@ -6,7 +6,7 @@
 |-|-|
 |Tiago Henrique Stockmann Teixeira| 47039311 |
 |Victor Chouzende dos Santos| 46910433 |
-|Carlos Eduardo Azevedo Alves||
+|Carlos Eduardo Azevedo Alves| 47307650 |
 |Davi Henrique Santos||
 
 ## Sobre o Projeto
