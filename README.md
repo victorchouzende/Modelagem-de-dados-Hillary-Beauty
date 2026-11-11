@@ -916,7 +916,7 @@ O sistema deverá registrar, com data, hora e usuário, os eventos abaixo.
 
 ## Normalização do Modelo Relacional
 
-A normalização organiza os dados para reduzir redundâncias e evitar anomalias de inserção, atualização e exclusão. A análise abaixo considera as relações descritas no modelo lógico e a estrutura documentada em `banco-logico/01_schema.sql`.
+A normalização organiza os dados para reduzir redundâncias e evitar anomalias de inserção, atualização e exclusão. A análise abaixo considera as relações descritas no modelo lógico e a estrutura documentada em `banco-logico/hillary-beauty-schema.sql`.
 
 ### Primeira Forma Normal (1FN)
 
@@ -946,7 +946,7 @@ A decomposição busca manter cada fato no local apropriado, reduzir repetição
 
 ## Modelo Lógico (PostgreSQL / Supabase)
 
-O modelo lógico transforma as entidades e os relacionamentos do modelo conceitual em tabelas, chaves, restrições, índices e regras automáticas (triggers). Ele foi implementado em **PostgreSQL**, usando o **Supabase** (serviço online) como ambiente de execução e demonstração. Os scripts estão organizados na pasta `banco-logico/`; o procedimento de execução e as verificações previstas estão descritos no README dessa pasta. O passo a passo para executá-los está em [`banco-logico/README.md`](banco-logico/README.md).
+O modelo lógico transforma as entidades e os relacionamentos do modelo conceitual em tabelas, chaves, restrições, índices e regras automáticas (triggers). Ele foi implementado em **PostgreSQL**, usando o **Supabase** (serviço online) como ambiente de execução e demonstração. Os scripts estão na pasta `banco-logico/`, em dois arquivos, e o passo a passo de execução está logo abaixo, em “Como executar”.
 
 ### SGBD e ambiente
 
@@ -956,20 +956,24 @@ O modelo lógico transforma as entidades e os relacionamentos do modelo conceitu
 ### Estrutura do repositório
 
 ``` text
-README.md                      (este documento)
-Fluxograma.jpeg                (processo atual)
-DER/                           (DER e fluxo de dados)
+README.md                          (este documento)
+Dicionario de dados.html           (dicionário de dados)
+Fluxograma.jpeg                    (processo atual)
+DER/                               (DER e fluxo de dados)
 banco-logico/
-├── README.md                  (passo a passo para executar)
-├── 01_schema.sql              (tabelas, restrições, índices, triggers, log, views, RLS)
-├── 02_seed_dados.sql          (dados fictícios de demonstração)
-├── 03_consultas.sql           (conferência e consultas do README)
-├── 04_testes_regras.sql       (testes das regras de negócio)
-├── manutencao/
-│   ├── limpar_dados.sql       (apaga os dados, mantém a estrutura)
-│   └── apagar_tudo.sql        (apaga estrutura e dados)
-└── prints/                    (evidências do banco funcionando)
+├── hillary-beauty-schema.sql      (arquivo 1: tabelas, restrições, índices, triggers, log, views, RLS)
+├── hillary-beauty-db.sql          (arquivo 2: dados fictícios, consultas, testes das regras e limpeza)
+└── prints/                        (evidências do banco funcionando)
 ```
+
+### Como executar
+
+1. No Supabase, abra o **SQL Editor** de um projeto novo (banco vazio).
+2. Cole e execute **`banco-logico/hillary-beauty-schema.sql`** inteiro: cria tabelas, restrições, índices, triggers, log, views e RLS.
+3. Cole e execute **`banco-logico/hillary-beauty-db.sql`** inteiro: carrega a massa de dados fictícia (Parte A). As Partes C (testes) e D (limpeza) estão comentadas e não rodam sozinhas.
+4. Para conferir, selecione cada consulta da Parte B e use **Run selected** (o editor mostra só o resultado da última consulta executada).
+5. Para demonstrar as regras, descomente a Parte C e rode um teste por vez: os testes 1 a 15 devem terminar em erro, com a mensagem prevista; o teste 16 funciona e desfaz tudo no final.
+6. Para refazer o banco, use a Parte D (limpar dados ou apagar tudo) e execute os dois arquivos novamente.
 
 ### Do conceitual ao lógico
 
@@ -1011,7 +1015,7 @@ A transformação preserva as entidades e os relacionamentos identificados no mo
 
 #### Diagrama lógico relacional
 
-O diagrama abaixo representa as tabelas e os principais vínculos do modelo lógico. As constraints e os detalhes de implementação permanecem definidos no `01_schema.sql`.
+O diagrama abaixo representa as tabelas e os principais vínculos do modelo lógico. As constraints e os detalhes de implementação permanecem definidos no `hillary-beauty-schema.sql`.
 
 ``` mermaid
 erDiagram
@@ -1107,7 +1111,7 @@ erDiagram
     ATENDIMENTO o|--o{ MOVIMENTACAO_ESTOQUE : origina
 ```
 
-**Observação:** os tipos acima são representativos para leitura do diagrama. Para os tipos exatos, nomes de constraints e definição efetivamente implantada, a fonte de verdade é `banco-logico/01_schema.sql`.
+**Observação:** os tipos acima são representativos para leitura do diagrama. Para os tipos exatos, nomes de constraints e definição efetivamente implantada, a fonte de verdade é `banco-logico/hillary-beauty-schema.sql`.
 
 ### Regras implementadas no banco
 
@@ -1153,7 +1157,7 @@ erDiagram
 
 ### Dados de demonstração (fictícios)
 
-O arquivo `02_seed_dados.sql` popula o banco para demonstração: 25 clientes, 5 profissionais e 1 recepcionista, 22 procedimentos, 30 agendamentos (realizados, confirmados, aguardando sinal, cancelados e não comparecimentos), pagamentos, atendimentos e 12 produtos de estoque (esmaltes, EPIs e descartáveis).
+O arquivo `hillary-beauty-db.sql` (Parte A) popula o banco para demonstração: 25 clientes, 5 profissionais e 1 recepcionista, 22 procedimentos, 30 agendamentos (realizados, confirmados, aguardando sinal, cancelados e não comparecimentos), pagamentos, atendimentos e 12 produtos de estoque (esmaltes, EPIs e descartáveis).
 
 - **Vêm do levantamento (Anexo B):** os 22 procedimentos, os valores de referência (nas faixas, o menor valor) e os intervalos de retorno.
 - **São fictícios:** nomes e telefones de clientes e da equipe, duração dos procedimentos, habilitações, categorias e percentuais de comissão, produtos, quantidades e todos os agendamentos, pagamentos e atendimentos. Os percentuais reais de comissão não foram informados e a duração dos procedimentos ainda não foi levantada.
@@ -1278,4 +1282,561 @@ Esta seção registra as alternativas de modelagem que o grupo avaliou e decidiu
 
 #### 1. Entidade única para agendamento e atendimento
 
-**Alternativa descartada:** representar agendamento e atendimento em uma única entidade, marcando o status como “Realizado” quando o procedimento acontecesse.
+**Alternativa descartada:** representar agendamento e atendimento em uma única entidade, marcando o status como "Realizado" quando o procedimento acontecesse.
+
+Agendamento e atendimento são fatos de naturezas diferentes. O agendamento é uma intenção: pode ser cancelado ou não se concretizar. O atendimento é um fato consumado, que precisa preservar o que efetivamente ocorreu. Unir os dois obrigaria atributos como `horario_atendimento` a permanecerem vazios na maior parte dos registros, e faria qualquer contagem de atendimentos depender de um filtro por status — solução frágil, porque a alteração de um status reescreveria o histórico. A cardinalidade `(0,1)` do lado do agendamento expressa exatamente essa assimetria: todo atendimento tem origem em um agendamento, mas nem todo agendamento gera atendimento.
+
+#### 2. Atendimento vinculado apenas ao agendamento
+
+**Alternativa descartada:** fazer com que `Atendimento` se relacionasse exclusivamente com `Agendamento`, obtendo cliente, profissional e procedimento por junção através dele.
+
+Essa alternativa é mais enxuta e evita repetir vínculos. Ela foi descartada porque o atendimento é um registro histórico que deve permanecer estável independentemente do que ocorra depois com o agendamento que o originou. Se o agendamento for corrigido posteriormente — uma troca de profissional lançada com atraso, por exemplo — o histórico de atendimentos mudaria retroativamente, e a contabilização por profissional deixaria de refletir quem de fato executou o procedimento. Registrar cliente, profissional e procedimento diretamente no atendimento fixa o que aconteceu no momento da realização.
+
+A contrapartida é a possibilidade de divergência entre os dois caminhos. Por isso o dicionário de dados estabelece explicitamente que esses vínculos devem corresponder ao agendamento de origem — restrição que será implementada no modelo lógico.
+
+#### 3. Atributo `especialidade` no lugar do relacionamento "habilitada a"
+
+**Alternativa descartada:** utilizar apenas o atributo `especialidade` de `Profissional` para determinar quais procedimentos cada profissional pode executar.
+
+O atributo `especialidade` foi mantido, mas com função exclusivamente descritiva. Ele não serve ao controle operacional porque um texto não permite responder mecanicamente se determinada profissional está habilitada a determinado procedimento — que é justamente a verificação exigida antes de confirmar um agendamento. Além disso, uma profissional executa vários procedimentos, o que tornaria o atributo multivalorado. O relacionamento N:N transforma a validação em uma simples verificação de existência do vínculo.
+
+#### 4. Somente `quantidade_atual`, sem a entidade `Movimentacao_Estoque`
+
+**Alternativa descartada:** controlar o estoque apenas pelo atributo `quantidade_atual` de `Produto`, atualizando-o a cada uso.
+
+Guardar somente o saldo responde "quanto existe" e nada mais: não permite auditar divergências nem apurar consumo por período. A movimentação é o evento; o saldo é consequência dele. `quantidade_atual` foi mantido mesmo sendo derivável do somatório das movimentações, por uma razão prática: o alerta de estoque mínimo é consultado com frequência, e recalcular o somatório a cada leitura seria custoso. Trata-se de uma redundância consciente, controlada e aqui documentada.
+
+#### 5. Relacionamento N:N direto entre `Atendimento` e `Produto`
+
+**Alternativa descartada:** ligar `Atendimento` diretamente a `Produto` em um relacionamento muitos-para-muitos.
+
+Como o consumo de esmaltes, EPIs e descartáveis é geral, nem toda saída pertence a um atendimento. Quando houver vínculo, ele já é representado por `Movimentacao_Estoque`, que funciona como elo entre os dois e carrega atributos próprios (`quantidade`, `data_movimentacao`, `tipo_movimentacao`). Criar também um relacionamento direto produziria dois caminhos para o mesmo fato.
+
+#### 6. Entidade `Histórico` separada
+
+**Alternativa descartada:** criar uma entidade `Histórico` para armazenar os atendimentos passados de cada cliente.
+
+O histórico do cliente é uma **consulta**, não uma entidade: corresponde ao conjunto de atendimentos daquele cliente ordenado por data. Uma entidade `Histórico` duplicaria integralmente os atributos de `Atendimento`, criando duas representações do mesmo fato.
+
+#### 7. Cardinalidade 1:1 entre `Agendamento` e `Atendimento`
+
+**Alternativa descartada:** estabelecer que todo agendamento corresponde obrigatoriamente a um atendimento.
+
+Essa cardinalidade só seria correta se todo horário marcado fosse sempre cumprido. Na operação real existem cancelamentos e não comparecimentos, ambos previstos nos status do agendamento. A participação `(0,1)` do agendamento é o que permite que esses casos existam sem gerar um atendimento falso e sem contaminar a contagem de atendimentos realizados.
+
+#### 8. Pagamento vinculado ao Atendimento
+
+**Alternativa descartada:** ligar `Pagamento` a `Atendimento`.
+
+O sinal é pago antes do procedimento e é ele que confirma o agendamento. Nesse momento ainda não existe atendimento. Ligar o pagamento ao agendamento permite registrar o sinal na hora certa e, depois, o restante.
+
+#### 9. Armazenar a comissão
+
+**Alternativa descartada:** guardar o valor da comissão em cada atendimento.
+
+A comissão é resultado do percentual da categoria sobre o valor cobrado. Guardá-la duplicaria informação derivada e ficaria desatualizada se o percentual mudasse. Por isso ela é calculada na consulta.
+
+#### 10. Dois atributos de valor no procedimento
+
+**Alternativa descartada:** `valor_minimo` e `valor_maximo` em `Procedimento`.
+
+Mantém-se um único valor de referência, porque o preço final de alguns procedimentos varia por área, região ou sessão, e esse valor real é registrado no `Pagamento`. Duas faixas no cadastro adicionariam complexidade sem melhorar o controle.
+
+---
+
+# Controle de Estoque
+
+O estoque será controlado por meio de movimentações, para esmaltes, EPIs e descartáveis.
+
+### Entrada
+
+```text
+Produto
+   ↓
+Movimentação
+   ↓
+Tipo = ENTRADA
+   ↓
+Quantidade aumenta
+```
+
+### Saída (consumo geral)
+
+```text
+Produto utilizado
+   ↓
+Movimentação (com motivo; atendimento opcional)
+   ↓
+Tipo = SAÍDA
+   ↓
+Quantidade diminui
+```
+
+### Exemplo
+
+Supondo que a Hillary Beauty possua:
+
+```text
+Produto: Luva descartável (caixa)
+Quantidade atual: 10 unidades
+```
+
+Durante a semana foram consumidas 2 unidades:
+
+```text
+Quantidade anterior: 10
+Saída: 2
+Quantidade atual: 8
+```
+
+O sistema deverá impedir uma nova saída de quantidade superior ao estoque disponível.
+
+---
+
+# Controle de Agendamento
+
+O sistema deverá verificar conflitos de horários.
+
+Por exemplo:
+
+```text
+Profissional: Ana
+Data: 10/09/2026
+Horário: 14:00 - 15:00
+```
+
+Se já existir outro agendamento da mesma profissional que ocupe esse período, o sistema deverá impedir o novo agendamento.
+
+O controle deve considerar não somente o horário inicial, mas também a **duração do procedimento e o horário final**.
+
+```text
+Agendamento 1
+14:00 ───────── 15:00
+
+Agendamento 2
+14:30 ───────── 15:30
+
+          CONFLITO
+```
+
+O agendamento nasce como **Agendado** (aguardando o sinal) e passa a **Confirmado** após o pagamento do sinal de 40%, quando o horário fica reservado. Depois disso, só pode ser cancelado.
+
+> Nota do modelo lógico: como o horário só é reservado após o sinal, o conflito é verificado contra os agendamentos com horário reservado (Confirmado e Realizado). Dois pedidos ainda aguardando o sinal podem coexistir; o segundo a ser confirmado é recusado pelo banco.
+
+---
+
+# Consultas que o Banco Deverá Permitir
+
+A modelagem permite criar consultas como as abaixo, implementadas como views no modelo lógico (`banco-logico/hillary-beauty-db.sql` (Parte B)). Os valores são fictícios.
+
+### Quantidade de atendimentos por profissional
+
+```text
+Profissional | Atendimentos
+-------------|-------------
+Ana          | 25
+Maria        | 31
+Joana        | 19
+Carla        | 27
+```
+
+### Atendimentos por procedimento
+
+```text
+Procedimento          | Quantidade
+----------------------|-----------
+Limpeza de pele       | 32
+Design de sobrancelha | 18
+Procedimento X        | 15
+```
+
+### Histórico do cliente
+
+```text
+Cliente: Maria Silva
+
+Data       Procedimento       Profissional
+---------- ------------------ -------------
+02/09/2026 Limpeza de pele    Ana
+15/09/2026 Procedimento X     Maria
+```
+
+### Produtos com estoque baixo
+
+```text
+Produto            Atual    Mínimo
+------------------ -------- -------
+Luva descartável   3        5
+Esmalte X          2        3
+```
+
+### Comissão por profissional no período
+
+```text
+Profissional | Categoria  | Valor cobrado | Comissão
+-------------|------------|---------------|---------
+Ana          | Categoria A| 1.000,00      | percentual da categoria × valor cobrado
+```
+
+---
+
+# Integridade e Segurança dos Dados
+
+O banco de dados deverá utilizar chaves primárias e estrangeiras para manter os relacionamentos entre as entidades.
+
+As chaves estrangeiras deverão impedir que sejam criados registros apontando para clientes, profissionais, procedimentos, produtos, agendamentos ou atendimentos inexistentes.
+
+Também deverão ser utilizadas restrições para:
+
+* Impedir quantidade negativa no estoque;
+* Impedir quantidades de movimentação e valores de pagamento iguais ou menores que zero;
+* Garantir campos obrigatórios;
+* Controlar status;
+* Evitar registros órfãos;
+* Preservar o histórico dos atendimentos;
+* Preservar pagamentos e movimentações de estoque;
+* Evitar conflitos de agendamento.
+
+---
+
+# Benefícios Esperados
+
+A implementação dessa modelagem poderá proporcionar à Hillary Beauty:
+
+* Maior organização dos dados;
+* Centralização das informações;
+* Redução de erros manuais;
+* Redução de conflitos de horários;
+* Melhor controle da agenda e dos sinais pagos;
+* Identificação da profissional responsável;
+* Histórico completo dos clientes;
+* Contabilização dos atendimentos e apuração da comissão;
+* Controle das entradas e saídas de esmaltes, EPIs e descartáveis;
+* Identificação de estoque baixo;
+* Prevenção de estoque negativo;
+* Maior segurança das informações;
+* Facilidade para consultas e relatórios;
+* Maior eficiência na gestão da empresa.
+
+---
+
+# Conclusão
+
+A modelagem proposta para a Hillary Beauty busca solucionar problemas existentes no processo atual de atendimento e gerenciamento da empresa.
+
+A utilização de um banco de dados estruturado permitirá substituir o controle descentralizado realizado por WhatsApp, Instagram, conversas e anotações manuais por uma estrutura organizada e integrada.
+
+As entidades **Cliente, Profissional, Categoria_Profissional, Procedimento, Agendamento, Atendimento, Pagamento, Produto e Movimentação de Estoque**, juntamente com o relacionamento **habilitada a**, permitem representar os principais processos do negócio.
+
+A separação entre **agendamento e atendimento** permite diferenciar aquilo que foi planejado daquilo que realmente foi realizado. Da mesma forma, a separação entre **produto e movimentação de estoque** possibilita controlar a quantidade atual e manter o histórico das entradas e saídas.
+
+Com isso, a modelagem fornece uma base adequada para o desenvolvimento futuro de um sistema de gerenciamento da Hillary Beauty, permitindo maior controle sobre os atendimentos, profissionais, clientes, procedimentos, pagamentos e estoque.
+
+---
+
+# Documentação do Uso de Inteligência Artificial
+
+> Observação: após a avaliação, o modelo foi revisado (inclusão de `Pagamento` e `Categoria_Profissional`, relacionamento N:N simples "habilitada a", novas regras de agendamento e estoque). As seções 1 a 7 abaixo descrevem o uso da IA na elaboração da versão inicial.
+
+## 1. Ferramenta e etapa
+
+Durante o desenvolvimento do projeto de modelagem de banco de dados da Hillary Beauty, foi utilizada uma ferramenta de inteligência artificial generativa, o ChatGPT, como recurso de apoio em diferentes etapas do trabalho.
+
+A ferramenta foi utilizada principalmente para organizar as informações fornecidas pelo grupo, estruturar os requisitos do sistema, auxiliar na identificação de entidades, atributos e relacionamentos, definir cardinalidades, organizar regras de negócio e revisar a redação da documentação.
+
+As principais etapas em que a IA foi utilizada foram:
+
+|Etapa|Utilização da IA|
+|-|-|
+|Levantamento do problema|Organização e estruturação das informações sobre os problemas atuais da empresa|
+|Organização do projeto|Estruturação do contexto, objetivo e justificativa da escolha da Hillary Beauty|
+|Modelagem conceitual|Identificação e organização das entidades, atributos e relacionamentos|
+|Cardinalidades|Apoio na definição das relações 1:N, 1:0..1 e N:N|
+|Requisitos|Estruturação dos requisitos do sistema e requisitos funcionais|
+|Requisitos não funcionais|Organização dos requisitos relacionados a desempenho, segurança, usabilidade e disponibilidade|
+|Regras de negócio|Transformação das necessidades do negócio em regras que o sistema deverá obedecer|
+|Regras operacionais|Organização das restrições operacionais do sistema|
+|Estrutura relacional|Organização das chaves primárias, chaves estrangeiras e tabelas|
+|Justificativa da modelagem|Apoio na explicação das decisões tomadas na abstração dos dados|
+|Revisão textual|Organização, padronização e correção da documentação|
+
+## 2. Motivação
+
+A utilização da IA teve como principal objetivo auxiliar o grupo na organização e estruturação das informações levantadas sobre a Hillary Beauty, transformando os problemas identificados no funcionamento da empresa em elementos que pudessem ser representados em um banco de dados.
+
+A empresa realiza atualmente grande parte dos seus processos por meio de WhatsApp e Instagram, com verificação manual da agenda e anotações posteriores em bloco de notas.
+
+Diante disso, a IA foi utilizada como ferramenta de apoio para:
+
+* Organizar as informações coletadas;
+* Transformar problemas em necessidades de sistema;
+* Estruturar requisitos funcionais e não funcionais;
+* Identificar entidades e relacionamentos;
+* Auxiliar na definição das cardinalidades;
+* Organizar as regras de negócio;
+* Revisar e padronizar a documentação.
+
+A intenção não foi substituir a análise do grupo, mas utilizar a IA como ferramenta de apoio à organização, elaboração e revisão do trabalho.
+
+## 3. Prompt(s) utilizados
+
+O arquivo final não contém um histórico completo dos prompts utilizados. Portanto, não é possível afirmar que os textos abaixo sejam uma transcrição literal dos prompts originais.
+
+Considerando o conteúdo produzido no README e as etapas de elaboração do projeto, os pedidos utilizados podem ser documentados de forma muito próxima aos comandos empregados no desenvolvimento.
+
+### Prompt relacionado à escolha e justificativa da empresa
+
+> Com base nessas informações sobre a Hillary Beauty, faça a justificativa da escolha da empresa para um trabalho de modelagem de banco de dados, explicando os problemas atuais e por que um banco de dados seria importante para a empresa.
+
+### Prompt relacionado ao processo atual
+
+> Com base nas informações fornecidas, monte o fluxo do processo atual de atendimento e agendamento da Hillary Beauty, considerando que o cliente entra em contato pelo WhatsApp ou Instagram, a profissional verifica a disponibilidade e o agendamento é anotado manualmente.
+
+### Prompt relacionado às necessidades do sistema
+
+> Com base nessas informações, indique 4 requisitos de sistema necessários para uma modelagem de banco de dados que automatize o registro dos processos da Hillary Beauty.
+
+### Prompt relacionado aos requisitos funcionais
+
+> Agora, com os mesmos requisitos, apresente 4 requisitos funcionais que o sistema deve possuir, seguindo o formato "o sistema deve permitir...".
+
+### Prompt relacionado aos requisitos não funcionais
+
+> Com a mesma base de informações, apresente os requisitos não funcionais do sistema, considerando desempenho, segurança, usabilidade e disponibilidade.
+
+### Prompt relacionado às regras de negócio
+
+> Com base nas informações da Hillary Beauty, crie as regras de negócio e regras operacionais que o sistema deverá seguir, incluindo agendamento, profissionais, procedimentos, atendimento e controle de estoque.
+
+### Prompt relacionado à modelagem
+
+> Com base em todas essas informações, identifique as entidades, atributos, relacionamentos e cardinalidades necessários para criar o modelo conceitual do banco de dados da Hillary Beauty.
+
+### Prompt relacionado à justificativa da modelagem
+
+> Explique e defenda as decisões de abstração e modelagem tomadas: por que essas entidades, esses atributos, esses relacionamentos e essas cardinalidades, e não outras alternativas possíveis? Faça de forma cordial e sem tópicos.
+
+**Observação:** os prompts acima representam uma reconstrução aproximada das solicitações realizadas. Eles não devem ser considerados uma transcrição literal de todo o histórico de conversas caso o grupo não possua esse histórico registrado.
+
+## 4. Resposta recebida
+
+A IA auxiliou na construção de uma modelagem que centraliza os principais processos da empresa.
+
+Entre os principais resultados estão:
+
+* Identificação da entidade **Cliente**;
+* Identificação da entidade **Profissional**;
+* Identificação da entidade **Procedimento**;
+* Criação da entidade **Agendamento**;
+* Criação da entidade **Atendimento**;
+* Criação da entidade **Produto**;
+* Criação da entidade **Movimentação_Estoque**;
+* Criação da entidade associativa **Profissional_Procedimento**.
+
+A entidade associativa foi utilizada porque uma profissional pode realizar vários procedimentos e um procedimento pode ser realizado por várias profissionais, caracterizando uma relação N:N.
+
+A IA também auxiliou na separação entre **Agendamento** e **Atendimento**, permitindo diferenciar aquilo que foi planejado daquilo que realmente aconteceu.
+
+Outro resultado foi a separação entre **Produto** e **Movimentação_Estoque**, permitindo controlar a quantidade atual e manter o histórico das entradas e saídas.
+
+Além disso, foram estruturados requisitos funcionais, requisitos não funcionais, regras de negócio, regras operacionais, chaves primárias, chaves estrangeiras e cardinalidades para a modelagem.
+
+## 5. Fontes consultadas e verificadas
+
+De acordo com o arquivo analisado, não foram registradas fontes externas consultadas pela IA.
+
+As informações utilizadas na modelagem tiveram como base o cenário da Hillary Beauty fornecido para o desenvolvimento do projeto.
+
+O documento registra, por exemplo, que:
+
+* A empresa atua no segmento de estética e beleza;
+* Utiliza WhatsApp e Instagram para agendamento;
+* Utiliza controle manual;
+* Não possui controle estruturado de estoque.
+
+Também não há, no arquivo, indicação de links, artigos, legislação ou bases externas utilizadas para justificar a modelagem.
+
+Portanto:
+
+> Não foram registradas fontes externas utilizadas pela IA no desenvolvimento da documentação. As informações sobre o funcionamento da empresa foram baseadas no cenário fornecido ao grupo e utilizadas como referência para a modelagem.
+
+Não devem ser atribuídas à IA fontes ou dados externos que não estejam efetivamente registrados e verificados pelo grupo.
+
+## 6. Trechos rejeitados ou corrigidos
+
+O README final não possui um histórico de versões que permita identificar exatamente quais respostas da IA foram rejeitadas.
+
+Assim, não é possível apontar literalmente quais trechos foram descartados.
+
+Entretanto, a estrutura final demonstra que as sugestões foram analisadas e adaptadas ao contexto específico da Hillary Beauty, em vez de simplesmente utilizar uma estrutura genérica de banco de dados.
+
+Um exemplo importante é a representação da habilitação das profissionais. Em vez de colocar vários procedimentos diretamente dentro do cadastro da profissional, a documentação utiliza um relacionamento N:N para representá-la corretamente.
+
+Outro exemplo é a separação entre agendamento e atendimento. O documento não considera que todo agendamento necessariamente resulte em atendimento, estabelecendo a participação **(0,1)** do agendamento.
+
+Dessa forma, registra-se que:
+
+> As sugestões geradas pela IA foram analisadas e adaptadas pelo grupo conforme o cenário apresentado. Não foi mantido um registro separado de todos os trechos rejeitados ou corrigidos, portanto não é possível apresentar uma relação exata das sugestões descartadas.
+
+## 7. Justificativa da escolha final
+
+A solução final foi mantida porque consegue representar os principais processos identificados na Hillary Beauty.
+
+A entidade **Cliente** permite armazenar os dados das pessoas atendidas. A entidade **Profissional** representa individualmente as pessoas da equipe. A entidade **Procedimento** representa os serviços oferecidos.
+
+A entidade **Agendamento** foi separada de **Atendimento** porque o agendamento representa uma reserva, enquanto o atendimento representa aquilo que efetivamente foi realizado. Dessa forma, cancelamentos e não comparecimentos não são confundidos com atendimentos efetivamente realizados.
+
+Para o estoque, a utilização de **Produto** juntamente com **Movimentação_Estoque** permite controlar entradas e saídas sem perder o histórico das movimentações.
+
+Dessa maneira, a estrutura final atende diretamente aos problemas identificados no cenário da empresa, principalmente a falta de centralização dos clientes, agendamentos, atendimentos e estoque.
+
+## 8. Reflexão crítica sobre o uso da IA
+
+A utilização da IA trouxe benefícios principalmente na organização das informações e na estruturação da documentação, mas suas respostas não devem ser consideradas automaticamente corretas.
+
+Um dos principais limites é que uma IA pode sugerir estruturas genéricas que não necessariamente correspondem à realidade da empresa. Por isso, as entidades, atributos, relacionamentos e regras precisam ser analisados pelo grupo antes de serem incorporados ao modelo.
+
+No caso da Hillary Beauty, foi necessário considerar especificamente a composição da equipe, que os agendamentos são realizados atualmente por WhatsApp e Instagram e que existe uma deficiência no controle de estoque.
+
+Outro ponto crítico é a possibilidade de a IA criar informações que não foram efetivamente observadas. Por esse motivo, dados fictícios, exemplos e sugestões da IA não devem ser tratados como fatos reais da empresa sem validação.
+
+Também é necessário analisar criticamente as regras propostas. O documento, por exemplo, estabelece que uma saída de estoque somente pode ocorrer quando houver quantidade suficiente disponível e que o sistema não pode permitir estoque negativo. Essas regras fazem sentido para o modelo proposto, mas devem ser confirmadas de acordo com o funcionamento real do negócio.
+
+Assim, a IA foi utilizada como **ferramenta de apoio**, e não como fonte absoluta de verdade. A responsabilidade pela seleção das informações, validação das regras e decisão final sobre a estrutura do banco de dados permanece com o grupo.
+
+## Conclusão sobre o uso da IA
+
+A inteligência artificial contribuiu para tornar a documentação mais organizada e facilitar a transformação das necessidades identificadas no negócio em elementos de uma modelagem de banco de dados.
+
+Entretanto, o grupo manteve a responsabilidade pelas decisões finais, realizando análise crítica das sugestões recebidas e adequando-as ao contexto da Hillary Beauty.
+
+O uso da IA, portanto, ocorreu de forma complementar ao trabalho do grupo, servindo como instrumento de apoio para pesquisa interna do problema apresentado, organização, redação, revisão e estruturação da modelagem.
+
+---
+
+# Apêndice A — Antecipação do Modelo Lógico
+
+> As chaves primárias e estrangeiras apresentadas abaixo **não fazem parte do modelo conceitual** e não estão representadas no DER, onde os vínculos aparecem como relacionamentos. Elas foram registradas aqui como antecipação do modelo lógico, que está implementado na seção "Modelo Lógico" e em `banco-logico/hillary-beauty-schema.sql`.
+
+## Cliente
+
+```text
+PK: id_cliente
+```
+
+## Categoria_Profissional
+
+```text
+PK: id_categoria
+```
+
+## Profissional
+
+```text
+PK: id_profissional
+
+FK: id_categoria → Categoria_Profissional (opcional)
+```
+
+## Procedimento
+
+```text
+PK: id_procedimento
+```
+
+## Profissional_Procedimento (tabela de ligação do N:N "habilitada a")
+
+```text
+PK: id_profissional + id_procedimento
+
+FK: id_profissional → Profissional
+FK: id_procedimento → Procedimento
+```
+
+## Agendamento
+
+```text
+PK: id_agendamento
+
+FK: id_cliente → Cliente
+FK: id_profissional → Profissional
+FK: id_procedimento → Procedimento
+```
+
+## Atendimento
+
+```text
+PK: id_atendimento
+
+FK: id_agendamento → Agendamento (único)
+FK: id_cliente → Cliente
+FK: id_profissional → Profissional
+FK: id_procedimento → Procedimento
+```
+
+## Pagamento
+
+```text
+PK: id_pagamento
+
+FK: id_agendamento → Agendamento
+```
+
+## Produto
+
+```text
+PK: id_produto
+```
+
+## Movimentação_Estoque
+
+```text
+PK: id_movimentacao
+
+FK: id_produto → Produto
+FK: id_atendimento → Atendimento (opcional)
+```
+
+---
+
+# Anexo B — Procedimentos Levantados
+
+Valores de referência e intervalos de retorno informados pela organização. Nos procedimentos com preço variável, o valor efetivamente cobrado é registrado no pagamento.
+
+|Procedimento|Valor de referência|Intervalo de retorno|Observação|
+|-|-|-|-|
+|Brow lamination|R$ 160,00|35 dias||
+|Design estratégico|R$ 70,00|20 dias||
+|Nanofios|R$ 700,00|8 meses||
+|Lash Lifting|R$ 150,00|45 dias||
+|Hidraglos|R$ 150,00|30 dias||
+|Remoção de micropigmentação|R$ 250,00 por sessão|20 dias|Em média, 3 a 5 sessões|
+|Extensão de cílios|R$ 200,00|20 dias|Informado como manutenção|
+|Biorepair|R$ 150,00 por sessão|20 dias|Em média, 3 sessões|
+|Depilação a laser|R$ 60,00 a R$ 150,00|30 dias|Depende da área|
+|Remoção de estrias|R$ 300,00 a R$ 600,00|45 dias entre as sessões|Depende da região|
+|Manicure tradicional|R$ 45,00|7 dias||
+|Pedicure tradicional|R$ 50,00|15 dias||
+|Manicure em gel|R$ 80,00|15 dias||
+|Pedicure em gel|R$ 80,00|15 dias||
+|Quiropraxia|R$ 160,00 por sessão|Depende de avaliação||
+|Limpeza de pele|R$ 200,00|Depende de avaliação||
+|Microagulhamento|R$ 450,00|40 dias||
+|Massagens|R$ 100,00 a R$ 150,00|Não informado||
+|Preenchimento facial|R$ 1.200,00 por ml|Retoque anual||
+|Bioestimulador de colágeno|R$ 2.500,00|1 ano||
+|Preenchimento glúteo|R$ 6.000,00 (55 ml)|Retoque somente com avaliação||
+|Laser Lavien|R$ 700,00|40 dias||
+
+---
+
+# Referências Bibliográficas
+
+- BRASIL. **Lei nº 13.709, de 14 de agosto de 2018**. Lei Geral de Proteção de Dados Pessoais (LGPD). Brasília, DF: Presidência da República, 2018. Disponível em: https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/l13709.htm. Acesso em: 22 set. 2026.
+- CHEN, Peter Pin-Shan. The Entity-Relationship Model: Toward a Unified View of Data. **ACM Transactions on Database Systems**, v. 1, n. 1, p. 9-36, 1976.
+- DATE, C. J. **Introdução a sistemas de bancos de dados**. 8. ed. Rio de Janeiro: Elsevier, 2004.
+- ELMASRI, Ramez; NAVATHE, Shamkant B. **Sistemas de banco de dados**. 7. ed. São Paulo: Pearson, 2019.
+- HEUSER, Carlos Alberto. **Projeto de banco de dados**. 6. ed. Porto Alegre: Bookman, 2009.
+- MACHADO, Felipe Nery Rodrigues. **Banco de dados: projeto e implementação**. 3. ed. São Paulo: Érica, 2014.
+- POSTGRESQL GLOBAL DEVELOPMENT GROUP. **PostgreSQL Documentation**. Disponível em: https://www.postgresql.org/docs/. Acesso em: 9 nov. 2026.
+- SILBERSCHATZ, Abraham; KORTH, Henry F.; SUDARSHAN, S. **Sistema de banco de dados**. 7. ed. Rio de Janeiro: LTC, 2020.
