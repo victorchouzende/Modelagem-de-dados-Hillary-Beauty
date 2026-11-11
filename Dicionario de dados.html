@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dicionário de Dados - Hillary Beauty</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+        .table-row-hover:hover {
+            background-color: #f1f5f9;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Classe utilitária para as abas */
+        .hidden-section {
+            display: none;
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased">
+
+    <!-- Navbar -->
+    <nav class="bg-pink-600 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center space-x-3">
+                    <span class="font-bold text-xl tracking-tight">Hillary Beauty</span>
+                </div>
+                <div class="hidden md:block text-sm font-medium text-pink-100">
+                    DICIONÁRIO TÉCNICO DE DADOS
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col lg:flex-row gap-8">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full lg:w-1/4 flex-shrink-0">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-5 sticky top-24">
+                <h3 class="font-bold text-slate-800 text-lg mb-4 border-b pb-2">Tabelas (11)</h3>
+                <ul class="space-y-2 text-sm" id="menu-lateral">
+                    <li><a href="#tb-visao_geral" class="text-slate-600 font-medium transition-colors block py-1">0. Visão Geral</a></li>
+                    <li><a href="#tb-cliente" class="text-slate-600 font-medium transition-colors block py-1">1. cliente</a></li>
+                    <li><a href="#tb-profissional" class="text-slate-600 font-medium transition-colors block py-1">2. profissional</a></li>
+                    <li><a href="#tb-procedimento" class="text-slate-600 font-medium transition-colors block py-1">3. procedimento</a></li>
+                    <li><a href="#tb-agendamento" class="text-slate-600 font-medium transition-colors block py-1">4. agendamento</a></li>
+                    <li><a href="#tb-atendimento" class="text-slate-600 font-medium transition-colors block py-1">5. atendimento</a></li>
+                    <li><a href="#tb-pagamento" class="text-slate-600 font-medium transition-colors block py-1">6. pagamento</a></li>
+                    <li><a href="#tb-comissao" class="text-slate-600 font-medium transition-colors block py-1">7. comissao</a></li>
+                    <li><a href="#tb-produto" class="text-slate-600 font-medium transition-colors block py-1">8. produto</a></li>
+                    <li><a href="#tb-uso_produto" class="text-slate-600 font-medium transition-colors block py-1">9. uso_produto</a></li>
+                    <li><a href="#tb-historico_clinico" class="text-slate-600 font-medium transition-colors block py-1">10. historico_clinico</a></li>
+                    <li><a href="#tb-log_auditoria" class="text-slate-600 font-medium transition-colors block py-1">11. log_auditoria</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="w-full lg:w-3/4">
+            
+            <div class="mb-8 bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <h1 class="text-2xl font-bold text-slate-800 mb-2">Modelo Lógico - Documentação</h1>
+                <p class="text-slate-600 mb-4 text-sm leading-relaxed">
+                    Selecione uma tabela no menu lateral para visualizar sua estrutura. 
+                    Todas as tabelas utilizam UUID como chave primária, possuem <code>created_at</code> e estão protegidas por RLS.
+                </p>
+                <div class="flex gap-2">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">PostgreSQL</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Supabase</span>
+                </div>
+            </div>
+
+            <!-- Container for all tables -->
+            <div id="tables-container" class="space-y-0">
+
+                <!-- 0. Visão Geral -->
+                <section id="tb-visao_geral" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">Visão Geral do Projeto</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Info</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-slate-600 mb-6 text-sm leading-relaxed">
+                            O banco de dados <strong>Hillary Beauty</strong> foi modelado para suportar todas as operações de uma clínica de estética. 
+                            Abaixo estão as características principais da infraestrutura e regras de negócio gerais aplicadas.
+                        </p>
+                        <div class="overflow-x-auto rounded-lg border border-slate-200">
+                            <table class="w-full text-sm text-left text-slate-600">
+                                <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                    <tr>
+                                        <th class="px-6 py-3">Característica</th>
+                                        <th class="px-6 py-3">Detalhe</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b table-row-hover">
+                                        <td class="px-6 py-4 font-bold text-slate-800">Tecnologia Base</td>
+                                        <td class="px-6 py-4">PostgreSQL hospedado no Supabase.</td>
+                                    </tr>
+                                    <tr class="border-b table-row-hover">
+                                        <td class="px-6 py-4 font-bold text-slate-800">Total de Tabelas</td>
+                                        <td class="px-6 py-4">11 Tabelas de negócio interligadas.</td>
+                                    </tr>
+                                    <tr class="border-b table-row-hover">
+                                        <td class="px-6 py-4 font-bold text-slate-800">Segurança de Dados</td>
+                                        <td class="px-6 py-4">Row Level Security (RLS) ativo em 100% das tabelas. Acesso anônimo via API bloqueado.</td>
+                                    </tr>
+                                    <tr class="border-b table-row-hover">
+                                        <td class="px-6 py-4 font-bold text-slate-800">Auditoria Automática</td>
+                                        <td class="px-6 py-4">Tabela dedicada (<code>log_auditoria</code>) alimentada por Triggers para rastrear alterações críticas no banco.</td>
+                                    </tr>
+                                    <tr class="table-row-hover">
+                                        <td class="px-6 py-4 font-bold text-slate-800">Chaves Primárias</td>
+                                        <td class="px-6 py-4">Todas as tabelas utilizam UUID gerados automaticamente (<code>uuid_generate_v4()</code>).</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 1. Cliente -->
+                <section id="tb-cliente" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">cliente</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Cadastro Base</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único (uuid_generate_v4).</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">nome</td>
+                                    <td class="px-6 py-4">VARCHAR(100)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Nome completo da(o) cliente.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">telefone</td>
+                                    <td class="px-6 py-4">VARCHAR(20)</td>
+                                    <td class="px-6 py-4">NOT NULL, UNIQUE</td>
+                                    <td class="px-6 py-4">Usado para contato e lembretes de retorno.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">data_nascimento</td>
+                                    <td class="px-6 py-4">DATE</td>
+                                    <td class="px-6 py-4">NULL</td>
+                                    <td class="px-6 py-4">Para promoções de aniversário.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 2. Profissional -->
+                <section id="tb-profissional" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">profissional</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Equipe</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">nome</td>
+                                    <td class="px-6 py-4">VARCHAR(100)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Nome do especialista.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">ativo</td>
+                                    <td class="px-6 py-4">BOOLEAN</td>
+                                    <td class="px-6 py-4">DEFAULT true</td>
+                                    <td class="px-6 py-4">Impede agendamentos se falso.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 3. Procedimento -->
+                <section id="tb-procedimento" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">procedimento</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Catálogo</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">nome</td>
+                                    <td class="px-6 py-4">VARCHAR(100)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Ex: Botox, Limpeza de Pele.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">valor_base</td>
+                                    <td class="px-6 py-4">DECIMAL(10,2)</td>
+                                    <td class="px-6 py-4">NOT NULL, > 0</td>
+                                    <td class="px-6 py-4">Valor de referência.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">perc_comissao</td>
+                                    <td class="px-6 py-4">DECIMAL(5,2)</td>
+                                    <td class="px-6 py-4">NOT NULL, 0-100</td>
+                                    <td class="px-6 py-4">Percentual padrão para repasse.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">intervalo_retorno_dias</td>
+                                    <td class="px-6 py-4">INTEGER</td>
+                                    <td class="px-6 py-4">NULL</td>
+                                    <td class="px-6 py-4">Dias sugeridos para novo agendamento.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 4. Agendamento -->
+                <section id="tb-agendamento" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">agendamento</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Agenda</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">cliente_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Ref: <code>cliente.id</code>.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">profissional_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Ref: <code>profissional.id</code>.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">data_hora</td>
+                                    <td class="px-6 py-4">TIMESTAMP</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Data e hora do compromisso.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">status</td>
+                                    <td class="px-6 py-4">VARCHAR(20)</td>
+                                    <td class="px-6 py-4">CHECK</td>
+                                    <td class="px-6 py-4">Valores: 'Agendado', 'Concluído', 'Cancelado'.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 5. Atendimento -->
+                <section id="tb-atendimento" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">atendimento</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Operação</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">agendamento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> UNIQUE</td>
+                                    <td class="px-6 py-4">1:1 com Agendamento. Requer status='Concluído'.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">procedimento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Procedimento realizado.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">valor_final</td>
+                                    <td class="px-6 py-4">DECIMAL(10,2)</td>
+                                    <td class="px-6 py-4">NOT NULL, >= 0</td>
+                                    <td class="px-6 py-4">Valor cobrado (pode incluir desconto).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 6. Pagamento -->
+                <section id="tb-pagamento" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">pagamento</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Financeiro</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">atendimento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Atendimento ao qual o pagamento se refere.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">valor_pago</td>
+                                    <td class="px-6 py-4">DECIMAL(10,2)</td>
+                                    <td class="px-6 py-4">NOT NULL, > 0</td>
+                                    <td class="px-6 py-4">Quantia paga nesta transação.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">metodo</td>
+                                    <td class="px-6 py-4">VARCHAR(20)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Pix, Cartão de Crédito, Dinheiro, etc.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">data_pagamento</td>
+                                    <td class="px-6 py-4">TIMESTAMP</td>
+                                    <td class="px-6 py-4">DEFAULT now()</td>
+                                    <td class="px-6 py-4">Data da efetivação.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 7. Comissão -->
+                <section id="tb-comissao" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">comissao</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Financeiro</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">atendimento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Vincula a comissão ao serviço prestado.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">profissional_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Quem recebe a comissão.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">valor</td>
+                                    <td class="px-6 py-4">DECIMAL(10,2)</td>
+                                    <td class="px-6 py-4">NOT NULL, > 0</td>
+                                    <td class="px-6 py-4">Valor repassado. (Calculado via Trigger/App).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 8. Produto -->
+                <section id="tb-produto" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">produto</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Estoque</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">nome</td>
+                                    <td class="px-6 py-4">VARCHAR(100)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Nome do insumo.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">qtd_estoque</td>
+                                    <td class="px-6 py-4">INTEGER</td>
+                                    <td class="px-6 py-4">NOT NULL, >= 0</td>
+                                    <td class="px-6 py-4">Estoque atual.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">estoque_minimo</td>
+                                    <td class="px-6 py-4">INTEGER</td>
+                                    <td class="px-6 py-4">NOT NULL, DEFAULT 5</td>
+                                    <td class="px-6 py-4">Usado para relatório de alerta.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 9. Uso Produto -->
+                <section id="tb-uso_produto" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">uso_produto</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Estoque</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">atendimento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Atendimento em que o produto foi usado.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">produto_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">O insumo utilizado.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">quantidade</td>
+                                    <td class="px-6 py-4">INTEGER</td>
+                                    <td class="px-6 py-4">NOT NULL, > 0</td>
+                                    <td class="px-6 py-4">Quantidade deduzida do estoque (geralmente gerencia via trigger).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 10. Histórico Clínico -->
+                <section id="tb-historico_clinico" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">historico_clinico</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Prontuário</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">cliente_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NOT NULL</td>
+                                    <td class="px-6 py-4">Cliente avaliado.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">atendimento_id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">FK</span> NULL</td>
+                                    <td class="px-6 py-4">Opcional. Pode ser avaliação geral ou de um procedimento.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">anotacoes</td>
+                                    <td class="px-6 py-4">TEXT</td>
+                                    <td class="px-6 py-4">NULL</td>
+                                    <td class="px-6 py-4">Evolução, sensibilidade, alergias notadas, etc.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">url_fotos</td>
+                                    <td class="px-6 py-4">ARRAY / JSONB</td>
+                                    <td class="px-6 py-4">NULL</td>
+                                    <td class="px-6 py-4">Links para o Supabase Storage (fotos de antes e depois).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- 11. Log Auditoria -->
+                <section id="tb-log_auditoria" class="table-section bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden hidden-section">
+                    <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+                        <h2 class="text-lg font-bold text-slate-800 font-mono">log_auditoria</h2>
+                        <span class="text-xs font-medium text-slate-500 uppercase tracking-wider">Segurança</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-slate-600">
+                            <thead class="text-xs text-slate-700 uppercase bg-slate-100 border-b border-slate-200">
+                                <tr>
+                                    <th class="px-6 py-3">Coluna</th>
+                                    <th class="px-6 py-3">Tipo</th>
+                                    <th class="px-6 py-3">Restrições</th>
+                                    <th class="px-6 py-3">Descrição / Regras</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">id</td>
+                                    <td class="px-6 py-4">UUID</td>
+                                    <td class="px-6 py-4"><span class="px-2 py-1 rounded bg-yellow-100 text-yellow-800 text-xs font-bold">PK</span></td>
+                                    <td class="px-6 py-4">Identificador único.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">tabela_afetada</td>
+                                    <td class="px-6 py-4">VARCHAR(50)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">Nome da tabela onde ocorreu a mudança.</td>
+                                </tr>
+                                <tr class="border-b table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">operacao</td>
+                                    <td class="px-6 py-4">VARCHAR(10)</td>
+                                    <td class="px-6 py-4">NOT NULL</td>
+                                    <td class="px-6 py-4">INSERT, UPDATE ou DELETE.</td>
+                                </tr>
+                                <tr class="table-row-hover">
+                                    <td class="px-6 py-4 font-mono font-medium text-slate-900">dados_antigos</td>
+                                    <td class="px-6 py-4">JSONB</td>
+                                    <td class="px-6 py-4">NULL</td>
+                                    <td class="px-6 py-4">Estado do registro antes da operação.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-800 text-slate-400 py-6 text-center text-sm mt-12">
+        <p>Hillary Beauty - Documentação de Banco de Dados Gerada com base no README (2).md</p>
+    </footer>
+
+    <!-- Sistema de Abas (Menu Lateral) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuLinks = document.querySelectorAll('#menu-lateral a');
+            const tableSections = document.querySelectorAll('.table-section');
+
+            function showTable(targetId) {
+                // Esconde todas as seções adicionando a classe 'hidden-section'
+                tableSections.forEach(section => {
+                    section.classList.add('hidden-section');
+                });
+                
+                // Mostra a seção desejada removendo a classe
+                const targetSection = document.querySelector(targetId);
+                if (targetSection) {
+                    targetSection.classList.remove('hidden-section');
+                }
+
+                // Atualiza o estilo visual do menu lateral
+                menuLinks.forEach(link => {
+                    if (link.getAttribute('href') === targetId) {
+                        // Ativo
+                        link.classList.remove('text-slate-600', 'font-medium');
+                        link.classList.add('text-pink-600', 'font-bold');
+                    } else {
+                        // Inativo
+                        link.classList.remove('text-pink-600', 'font-bold');
+                        link.classList.add('text-slate-600', 'font-medium');
+                    }
+                });
+            }
+
+            // Adiciona o evento de clique nos links do menu
+            menuLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault(); 
+                    const targetId = link.getAttribute('href');
+                    
+                    showTable(targetId);
+                    
+                    // Rola suavemente para o topo do container (útil no mobile ou telas menores)
+                    const container = document.getElementById('tables-container');
+                    if (container) {
+                        const offsetTop = container.getBoundingClientRect().top + window.scrollY - 100;
+                        window.scrollTo({ top: offsetTop, behavior: 'smooth' });
+                    }
+                });
+            });
+
+            // Inicialização: Mostra a tabela baseada no hash da URL ou a primeira tabela por padrão
+            const initialHash = window.location.hash || '#tb-visao_geral';
+            showTable(initialHash);
+        });
+    </script>
+</body>
+</html>
